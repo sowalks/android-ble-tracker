@@ -1,38 +1,74 @@
 package com.example.bletracker.fake
-
 import android.content.Context
+
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.test.core.app.ApplicationProvider
-import com.example.bletracker.data.dataStore
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.test.filters.SmallTest
+import androidx.test.platform.app.InstrumentationRegistry
 import com.example.bletracker.data.repository.DefaultDeviceIDRepository
-import com.example.bletracker.data.source.network.model.DeviceID
-import com.example.bletracker.rules.TestDispatcherRule
-import junit.framework.TestCase.assertEquals
+import com.example.bletracker.data.repository.LocalDeviceIDRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.createTestCoroutineScope
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
+import org.junit.After
 import org.junit.Test
+import org.junit.runner.RunWith
 
 
-//TODO: BAD
-val testContext = ApplicationProvider.getApplicationContext<Context>()
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "device")
-@ExperimentalCoroutinesApi
-class DeviceIDRepositoryTest{
+private const val TEST_DATASTORE_NAME: String = "test_device"
 
-        @get:Rule
-    val testDispatcher = TestDispatcherRule()
+//BAD LEAVE FOR NOW
+
+class DeviceIDRepositoryTest {
+    private val testContext: Context =
+        InstrumentationRegistry.getInstrumentation().targetContext
+    private val testCoroutineDispatcher: TestCoroutineDispatcher =
+        TestCoroutineDispatcher()
+    private val testCoroutineScope =
+        createTestCoroutineScope(testCoroutineDispatcher + Job())
+    private val testDataStore: DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
+            produceFile =
+            { testContext.preferencesDataStoreFile(TEST_DATASTORE_NAME) }
+        )
+    private val repository: LocalDeviceIDRepository =
+        DefaultDeviceIDRepository(testDataStore)
+
     @Test
-    fun defaultDeviceIDRepository_verify_get() = runTest {
+    fun repository_testFetchDeviceID() {
+        runTest {
+            val res = repository.get()
+            assertEquals(res.deviceID, -1)
 
-            val repository = DefaultDeviceIDRepository(
-                testContext.dataStore
-            )
-            repository.saveDeviceID(DeviceID(4))
-            assertEquals(FakeDataSource.deviceID, repository.get())
+        }
+    }
 
+    @Test
+    fun repository_testWriteDeviceID() {
+        runTest {
+            repository.set(FakeDataSource.deviceID)
+            assertEquals(repository.get().deviceID, FakeDataSource.deviceID.deviceID)
+        }
+    }
 
+    @After
+    fun cleanUp() {
+        Dispatchers.resetMain()
+        runTest {
+            testDataStore.edit { it.clear() }
+        }
     }
 }
+
+
+
+

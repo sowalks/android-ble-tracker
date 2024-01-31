@@ -18,7 +18,7 @@ import java.io.IOException
 
 interface LocalDeviceIDRepository {
     suspend fun get() : DeviceID
-    suspend fun saveDeviceID(deviceID: DeviceID)
+    suspend fun set(deviceID: DeviceID)
 }
 
 
@@ -55,7 +55,7 @@ class DefaultDeviceIDRepository(
     }
 
    //saves DeviceID integer to datastore as a preference
-    override suspend fun saveDeviceID(deviceID : DeviceID) {
+    override suspend fun set(deviceID : DeviceID) {
         dataStore.edit {preferences ->
             preferences[DEVICE_ID] = deviceID.deviceID
         }

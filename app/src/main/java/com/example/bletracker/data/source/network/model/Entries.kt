@@ -3,6 +3,7 @@ package com.example.bletracker.data.source.network.model
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import java.util.UUID
 
 @Serializable
@@ -15,7 +16,12 @@ data class Entry(
     var distance: Double,
     @SerialName("device_position")
     var position : Position
-)
+) {
+    //deep copy by serialization, if fields change, it is easier and more concise(esp. w cbor))
+    fun deepCopy() : Entry {
+        return Json.decodeFromString(Json.encodeToString(serializer(),this))
+    }
+}
 
 @Serializable
 data class Entries (

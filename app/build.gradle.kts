@@ -91,9 +91,13 @@ dependencies {
     //DataStore for local storage
     implementation("androidx.datastore:datastore:1.0.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    //Mutex for Log
+    implementation("androidx:kotlin")
+    //Instrumented Tests for storage
     implementation("androidx.test:core-ktx:1.5.0")
-    //Testing
-    androidTestImplementation("androidx.test.core:1.5.0")
+    implementation ("androidx.test:runner:1.5.2")
+    implementation ("androidx.test:rules:1.5.0")
+
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.compose.ui:ui-tooling")
     testImplementation("junit:junit:4.13.2")

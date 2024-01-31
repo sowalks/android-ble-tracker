@@ -27,7 +27,7 @@ class NetworkLocatorRepository(
         if(testID.deviceID < 0)
         {
             testID = locatorApiService.getDeviceID()
-            localDeviceIDRepository.saveDeviceID(testID)
+            localDeviceIDRepository.set(testID)
         }
         testID
     }

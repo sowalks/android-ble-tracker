@@ -8,7 +8,7 @@ class FakeDeviceIDRepository() : LocalDeviceIDRepository {
         return FakeDataSource.deviceID
     }
 
-    override suspend fun saveDeviceID(deviceID: DeviceID) {
+    override suspend fun set(deviceID: DeviceID) {
         TODO("Not yet implemented")
     }
 }
