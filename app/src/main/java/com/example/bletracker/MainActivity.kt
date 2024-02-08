@@ -44,3 +44,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+  //  setContent {
+        //MarsPhotosTheme {
+    //        MyApp(modifier = Modifier.fillMaxSize())
+      //  }
+    }
+}
+}

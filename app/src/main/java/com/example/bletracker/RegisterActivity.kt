@@ -12,13 +12,14 @@ import androidx.lifecycle.Observer
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import android.content.Intent
+import com.example.bletracker.BeaconReferenceApplication
 
 
-class RegisterActivity() : AppCompatActivity() {
-        lateinit var beaconListView: ListView
-        lateinit var beaconCountTextView: TextView
-        lateinit var rangingButton: Button
-        lateinit var beaconReferenceApplication: BeaconReferenceApplication
+class RegisterActivity : AppCompatActivity() {
+        private lateinit var beaconListView: ListView
+        private lateinit var beaconCountTextView: TextView
+        private lateinit var rangingButton: Button
+        private lateinit var beaconReferenceApplication: BeaconReferenceApplication
 
 
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,10 +31,10 @@ class RegisterActivity() : AppCompatActivity() {
         val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(beaconReferenceApplication.region)
         // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
         regionViewModel.rangedBeacons.observe(this, rangingObserver)
-        rangingButton = findViewById<Button>(R.id.rangingButton)
-        beaconListView = findViewById<ListView>(R.id.beaconList)
-        beaconCountTextView = findViewById<TextView>(R.id.beaconCount)
-        beaconCountTextView.text = "No beacons detected"
+        rangingButton = findViewById(R.id.rangingButton)
+        beaconListView = findViewById(R.id.beaconList)
+        beaconCountTextView = findViewById(R.id.beaconCount)
+        beaconCountTextView.text = getString(R.string.no_beacons_detected)
         beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
         }
 
@@ -44,15 +45,6 @@ class RegisterActivity() : AppCompatActivity() {
         override fun onResume() {
         Log.d(TAG, "onResume")
         super.onResume()
-        // You MUST make sure the following dynamic permissions are granted by the user to detect beacons
-        //
-        //    Manifest.permission.BLUETOOTH_SCAN
-        //    Manifest.permission.BLUETOOTH_CONNECT
-        //    Manifest.permission.ACCESS_FINE_LOCATION
-        //    Manifest.permission.ACCESS_BACKGROUND_LOCATION // only needed to detect in background
-        //
-        // The code needed to get these permissions has become increasingly complex, so it is in
-        // its own file so as not to clutter this file focussed on how to use the library.
 
         if (!BeaconScanPermissionsActivity.allPermissionsGranted(this,
         true)) {
@@ -64,7 +56,7 @@ class RegisterActivity() : AppCompatActivity() {
         // All permissions are granted now.  In the case where we are configured
         // to use a foreground service, we will not have been able to start scanning until
         // after permissions are granted.  So we will do so here.
-        if (BeaconManager.getInstanceForApplication(this).rangedRegions.size == 0) {
+        if (BeaconManager.getInstanceForApplication(this).rangedRegions.isEmpty()) {
         (application as BeaconReferenceApplication).setupBeaconScanning()
         }
         }
@@ -74,7 +66,7 @@ class RegisterActivity() : AppCompatActivity() {
 
         val rangingObserver = Observer<Collection<Beacon>> { beacons ->
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
-        if (BeaconManager.getInstanceForApplication(this).rangedRegions.size > 0) {
+        if (BeaconManager.getInstanceForApplication(this).rangedRegions.isNotEmpty()) {
         beaconCountTextView.text = "Ranging enabled: ${beacons.count()} beacon(s) detected"
         beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1,
         beacons
@@ -85,7 +77,7 @@ class RegisterActivity() : AppCompatActivity() {
 
         fun rangingButtonTapped(view: View) {
         val beaconManager = BeaconManager.getInstanceForApplication(this)
-        if (beaconManager.rangedRegions.size == 0) {
+        if (beaconManager.rangedRegions.isEmpty()) {
         beaconManager.startRangingBeacons(beaconReferenceApplication.region)
         rangingButton.text = "Stop Ranging"
         beaconCountTextView.text = "Ranging enabled -- awaiting first callback"
@@ -98,8 +90,6 @@ class RegisterActivity() : AppCompatActivity() {
         }
         }
 
-        fun monitoringButtonTapped(view: View) {
-        }
 
         companion object {
         val TAG = "MainActivity"

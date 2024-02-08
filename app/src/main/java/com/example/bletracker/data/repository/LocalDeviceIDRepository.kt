@@ -24,23 +24,22 @@ interface LocalDeviceIDRepository {
 
 class DefaultDeviceIDRepository(
     private val dataStore: DataStore<Preferences>
-) :  LocalDeviceIDRepository{
+) :  LocalDeviceIDRepository {
 
     //Reads integer deviceID from datastore
     private val deviceIDFlow: Flow<Int> = dataStore.data
-        .catch{
-            if(it is IOException) {
-            Log.e(TAG, "Error reading deviceID.", it)
-            //emptyPreferences will log my default : -1
-            emit(emptyPreferences())
-        } else {
-            throw  it
+        .catch {
+            if (it is IOException) {
+                Log.e(TAG, "Error reading deviceID.", it)
+                //emptyPreferences will log my default : -1
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
         }
+        .map { preferences ->
+            preferences[DEVICE_ID] ?: -1
         }
-        .map{
-            preferences ->
-            preferences[DEVICE_ID]  ?: -1
-    }
 
     //holds consts for getting DeviceID and logging w TAG
     companion object PreferenceKeys {
@@ -50,14 +49,16 @@ class DefaultDeviceIDRepository(
 
     override suspend fun get(): DeviceID {
         // gets DeviceID from datastore as int
-        val deviceIDInt = dataStore.data.first().toPreferences()[DEVICE_ID] ?:-1
+        val deviceIDInt = deviceIDFlow.first()
         return DeviceID(deviceIDInt)
     }
 
-   //saves DeviceID integer to datastore as a preference
-    override suspend fun set(deviceID : DeviceID) {
-        dataStore.edit {preferences ->
+    //saves DeviceID integer to datastore as a preference
+    override suspend fun set(deviceID: DeviceID) {
+        dataStore.edit { preferences ->
             preferences[DEVICE_ID] = deviceID.deviceID
         }
     }
 }
+
+    //TODO FIX DEVICEID FLOW

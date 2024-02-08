@@ -26,12 +26,11 @@
    android:roundIcon="@mipmap/ic_launcher_round"
    android:supportsRtl="true"
    android:theme="@style/Theme.MarsPhotos"
-   tools:targetApi="33"
-   android:name=".MarsPhotosApplication">
+   tools:targetApi="34"
+   android:name=".BLEReferenceApplication">
    <activity
-       android:name=".MainActivity"
+       android:name=".RegisterActivity"
        android:exported="true"
-       android:label="@string/app_name"
        android:theme="@style/Theme.MarsPhotos">
        <intent-filter>
            <action android:name="android.intent.action.MAIN" />

@@ -92,7 +92,7 @@ class PermissionsHelper(val context: Context) {
             // As of version S (12) we need FINE_LOCATION, BLUETOOTH_SCAN and BACKGROUND_LOCATION
             // Manifest.permission.BLUETOOTH_CONNECT is not absolutely required to do just scanning,
             // but it is required if you want to access some info from the scans like the device name
-            // and the aditional cost of requsting this access is minimal, so we just request it
+            // and the aditional cost of requesting this access is minimal, so we just request it
             permissions.add(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
