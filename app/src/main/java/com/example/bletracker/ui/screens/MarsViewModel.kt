@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bletracker.MarsPhotosApplication
 import com.example.bletracker.data.repository.LocatorRepository
+import com.example.bletracker.data.source.network.model.Entries
 
 
 import retrofit2.HttpException
@@ -37,6 +38,8 @@ sealed interface MarsUiState {
     data class Error(val msg: String) : MarsUiState
     object Loading : MarsUiState
 }
+
+
 
 class MarsViewModel(private val locatorRepository: LocatorRepository) : ViewModel() {
     /** The mutable State that stores the status of the most recent request */

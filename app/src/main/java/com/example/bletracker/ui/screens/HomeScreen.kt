@@ -32,69 +32,36 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import com.example.bletracker.data.source.network.model.Entries
+import com.example.bletracker.data.source.network.model.Entry
 
 
 @Composable
 fun HomeScreen(
-    marsUiState: MarsUiState,
+    locatorUiState: LocatorUiState,
     retryAction : () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (marsUiState) {
-        is MarsUiState.Success -> ResultScreen(
-            marsUiState.photos, modifier = modifier.fillMaxWidth()
-        )
+        var shouldShowPermissions by rememberSaveable { mutableStateOf(true) }
 
-        is MarsUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is MarsUiState.Error -> ErrorScreen(retryAction,marsUiState.msg, modifier = modifier.fillMaxSize())
-    }
-}
-/**
- * ResultScreen displaying number of photos retrieved.
- */
-@Composable
-fun ResultScreen(photos: String, modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-    ) {
-        Text(text = photos)
-    }
-}
-/* Display loading symbol While Waiting*/
-@Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
-    Image(
-        modifier = modifier.size(200.dp),
-        painter = painterResource(R.drawable.loading_img),
-        contentDescription = stringResource(R.string.loading)
-    )
-}
-
-@Composable
-fun ErrorScreen(retryAction: () -> Unit, msg : String, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_connection_error), contentDescription = ""
-        )
-        Text(text = msg, modifier = Modifier.padding(16.dp))
-        //      Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp)) generic
-        Button(onClick = retryAction) {
-            Text(stringResource(R.string.retry))
+        Surface(modifier) {
+            if (shouldShowPermissions) {
+                PermissionsScreen(onContinueClicked = { shouldShowPermissions = false })
+            } else {
+                LocateScreen(locatorUiState = locatorUiState, retryAction = { /*TODO*/ })
+            }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ResultScreenPreview() {
-    MarsPhotosTheme {
-        ResultScreen(stringResource(R.string.placeholder_result))
-    }
-}
