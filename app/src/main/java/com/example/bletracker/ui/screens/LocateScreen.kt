@@ -54,7 +54,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-
+import com.example.bletracker.data.source.network.model.Position
+import com.example.bletracker.data.source.network.model.Tag
+import kotlinx.datetime.LocalDateTime
+import java.util.UUID
 
 
 @Composable
@@ -151,13 +154,7 @@ fun ErrorScreen(retryAction: () -> Unit, msg : String, modifier: Modifier = Modi
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ResultScreenPreview() {
-    MarsPhotosTheme {
-        ResultScreen(Entries(listOf()))
-    }
-}
+
 
 @Composable
 fun SetModeDialog(tagID: Int, showDialog: Boolean, onDismiss : () -> Unit){
@@ -187,3 +184,22 @@ fun SetModeDialog(tagID: Int, showDialog: Boolean, onDismiss : () -> Unit){
 
 
 
+@Preview(showBackground = true)
+@Composable
+fun ResultScreenPreview() {
+    ResultScreen(Entries(listOf(
+        Entry(
+            time= LocalDateTime(2024,12,14,9,55,0) ,
+            tag  =  Tag(0U,0U, UUID(0,0)),
+            tagID = 1,
+            distance =  3.0,
+            position = Position(0.456,0.3456)
+        )
+    )),modifier = Modifier.fillMaxWidth())}
+
+@Preview(showBackground = true)
+@Composable
+fun DialogPreview() {
+    SetModeDialog(tagID = 6, showDialog = true) {
+    }
+}

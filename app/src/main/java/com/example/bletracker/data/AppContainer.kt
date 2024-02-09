@@ -4,19 +4,27 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.bletracker.data.ble.BLEBeaconHelper
+import com.example.bletracker.data.ble.BLEHelper
+import com.example.bletracker.data.repository.BLELogRepository
 import com.example.bletracker.data.repository.DefaultDeviceIDRepository
 import com.example.bletracker.data.repository.LocalDeviceIDRepository
 import com.example.bletracker.data.repository.LocatorRepository
+import com.example.bletracker.data.repository.LogRepository
 import com.example.bletracker.data.repository.NetworkLocatorRepository
 import retrofit2.Retrofit
 import com.example.bletracker.data.source.network.LocatorApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import org.altbeacon.beacon.Region
 
 
 interface AppContainer {
     val locatorRepository : LocatorRepository
+    val region : Region
+    val bleHelper: BLEBeaconHelper
+    val logRepository : LogRepository
 }
 
 //only ever a single instance, so initialize in context
@@ -42,8 +50,16 @@ class DefaultAppContainer(context : Context) : AppContainer {
         DefaultDeviceIDRepository(context.dataStore)
     }
 
+    override val logRepository : LogRepository by lazy{ BLELogRepository() }
+
     override val locatorRepository: LocatorRepository by lazy {
         NetworkLocatorRepository(retrofitService,deviceIDRepository)
     }
 
+    // the region definition ensures we are looking for any possible iBeacon
+    override val region : Region by lazy {Region("all-beacons", null, null, null)}
+
+    override val bleHelper :BLEBeaconHelper by lazy {
+        BLEHelper(context, logRepository, region)
+    }
 }

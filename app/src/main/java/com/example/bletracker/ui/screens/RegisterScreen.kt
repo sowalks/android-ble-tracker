@@ -15,6 +15,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
@@ -32,9 +36,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Entry
+import com.example.bletracker.data.source.network.model.Position
 import com.example.bletracker.data.source.network.model.Tag
+import kotlinx.datetime.LocalDateTime
+import org.junit.Test.None
+import java.util.UUID
 
 
 @Composable
@@ -78,6 +87,7 @@ fun RegisterTagDialog(tag: Tag, showDialog: Boolean, onDismiss: () -> Unit) {
     if(showDialog) {
         AlertDialog(
             title = { Text("Register this Tag?") },
+            text = {Text("UUID: ${tag.uuid} Major: ${tag.major}, Minor: ${tag.minor}")},
             onDismissRequest = { onDismiss },
             confirmButton = {Button(onClick ={/*TODO FOR VIEW MODEL*/}){Text("REGISTER")}},
             dismissButton = { Button(onClick =onDismiss){Text("CANCEL")} }
@@ -117,7 +127,20 @@ private fun BLETagDisplay(
 @Preview(showBackground = true)
 @Composable
 fun BLEResultScreenPreview() {
-    MarsPhotosTheme {
-        BLEResultScreen(Entries(listOf()))
+        BLEResultScreen(Entries(listOf(
+            Entry(
+                time= LocalDateTime(2024,12,14,9,55,0) ,
+                tag  =  Tag(0U,0U, UUID(0,0)),
+                tagID = 1,
+                distance =  3.0,
+                position = Position(0.456,0.3456)
+            )
+        )),modifier = Modifier.fillMaxWidth())}
+
+@Preview(showBackground = true)
+@Composable
+fun RegDialogPreview() {
+    RegisterTagDialog(tag = Tag(45U,45U, UUID(0,1)),showDialog = true,) {
+
     }
 }

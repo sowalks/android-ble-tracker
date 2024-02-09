@@ -16,6 +16,7 @@ import com.example.bletracker.BeaconReferenceApplication
 
 
 class RegisterActivity : AppCompatActivity() {
+
         private lateinit var beaconListView: ListView
         private lateinit var beaconCountTextView: TextView
         private lateinit var rangingButton: Button
@@ -23,19 +24,14 @@ class RegisterActivity : AppCompatActivity() {
 
 
         override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.locate_ui)
-        beaconReferenceApplication = application as BeaconReferenceApplication
+                super.onCreate(savedInstanceState)
+                beaconReferenceApplication = application as BeaconReferenceApplication
 
-        // Set up a Live Data observer for beacon data
-        val regionViewModel = BeaconManager.getInstanceForApplication(this).getRegionViewModel(beaconReferenceApplication.region)
-        // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
-        regionViewModel.rangedBeacons.observe(this, rangingObserver)
-        rangingButton = findViewById(R.id.rangingButton)
-        beaconListView = findViewById(R.id.beaconList)
-        beaconCountTextView = findViewById(R.id.beaconCount)
-        beaconCountTextView.text = getString(R.string.no_beacons_detected)
-        beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
+                // Set up a Live Data observer for beacon data
+                val regionViewModel = BeaconManager.getInstanceForApplication(this)
+                        .getRegionViewModel(beaconReferenceApplication.container.region)
+                // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
+                regionViewModel.rangedBeacons.observe(this, rangingObserver)
         }
 
         override fun onPause() {
@@ -78,18 +74,17 @@ class RegisterActivity : AppCompatActivity() {
         fun rangingButtonTapped(view: View) {
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         if (beaconManager.rangedRegions.isEmpty()) {
-        beaconManager.startRangingBeacons(beaconReferenceApplication.region)
+        beaconManager.startRangingBeacons(beaconReferenceApplication.container.region)
         rangingButton.text = "Stop Ranging"
         beaconCountTextView.text = "Ranging enabled -- awaiting first callback"
         }
         else {
-        beaconManager.stopRangingBeacons(beaconReferenceApplication.region)
+        beaconManager.stopRangingBeacons(beaconReferenceApplication.container.region)
         rangingButton.text = "Start Ranging"
         beaconCountTextView.text = "Ranging disabled -- no beacons detected"
         beaconListView.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayOf("--"))
         }
         }
-
 
         companion object {
         val TAG = "MainActivity"

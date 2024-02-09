@@ -15,6 +15,7 @@ import java.time.Instant
 
 interface  LogRepository{
     suspend fun consumeLog() : Entries
+    fun appendLog(entries: Collection<Beacon>)
     suspend fun appendLog(entries: List<Entry>)
 }
 class BLELogRepository ()  : LogRepository {
@@ -36,7 +37,7 @@ class BLELogRepository ()  : LogRepository {
     }
 
     //add to log
-    fun appendLog(beacons: Collection<Beacon>) {
+    override fun appendLog(beacons: Collection<Beacon>) {
         runBlocking {
             appendLog(beaconToEntry(beacons))
         }

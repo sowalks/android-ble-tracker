@@ -27,15 +27,6 @@
    android:supportsRtl="true"
    android:theme="@style/Theme.MarsPhotos"
    tools:targetApi="34"
-   android:name=".BLEReferenceApplication">
-   <activity
-       android:name=".RegisterActivity"
-       android:exported="true"
-       android:theme="@style/Theme.MarsPhotos">
-       <intent-filter>
-           <action android:name="android.intent.action.MAIN" />
-           <category android:name="android.intent.category.LAUNCHER" />
-       </intent-filter>
-   </activity>
+   android:name=".MarsPhotosApplication">
 </application>
 </manifest>

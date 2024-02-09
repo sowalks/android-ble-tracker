@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bletracker.R
 import com.example.bletracker.ui.screens.HomeScreen
+import com.example.bletracker.ui.screens.LocatorUiState
 import com.example.bletracker.ui.screens.MarsViewModel
 
 @Composable
@@ -51,8 +52,10 @@ fun MarsPhotosApp() {
         ) {
             val marsViewModel: MarsViewModel = viewModel(factory=MarsViewModel.Factory)
             HomeScreen(
-                marsUiState = marsViewModel.marsUiState,
-                retryAction = marsViewModel::getMarsPhotos
+                locatorUiState = LocatorUiState.Error("Please fix me"),
+                //marsUiState = marsViewModel.marsUiState,
+                retryAction = {},
+                modifier = Modifier.fillMaxSize()// marsViewModel::getMarsPhotos
             )
         }
     }

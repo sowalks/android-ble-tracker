@@ -48,6 +48,5 @@ class MainActivity : ComponentActivity() {
         //MarsPhotosTheme {
     //        MyApp(modifier = Modifier.fillMaxSize())
       //  }
-    }
-}
-}
+
+

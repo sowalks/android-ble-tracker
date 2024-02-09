@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import com.example.bletracker.R
 import com.example.bletracker.RegisterActivity
 import com.example.bletracker.data.repository.BLELogRepository
+import com.example.bletracker.data.repository.LogRepository
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.BeaconParser
@@ -23,7 +24,7 @@ interface BLEBeaconHelper{
     fun setupForegroundService()
 }
 
-class BLEHelper(private val context: Context, private val bleLogRepository: BLELogRepository,private val region: Region) : BLEBeaconHelper {
+class BLEHelper(private val context: Context, private val logRepository: LogRepository, private val region: Region) : BLEBeaconHelper {
 
     override fun setupBeaconScanning() {
         val beaconManager = BeaconManager.getInstanceForApplication(context)
@@ -106,7 +107,7 @@ class BLEHelper(private val context: Context, private val bleLogRepository: BLEL
             for (beacon: Beacon in beacons) {
                 Log.d(TAG, "$beacon about ${beacon.distance} meters away")
             }
-            bleLogRepository.appendLog(beacons)
+                logRepository.appendLog(beacons)
         }
         else {
             Log.d(RegisterActivity.TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
