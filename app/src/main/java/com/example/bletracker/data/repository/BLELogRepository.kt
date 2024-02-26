@@ -1,5 +1,6 @@
 package com.example.bletracker.data.repository
 
+import com.example.bletracker.data.ble.toListEntry
 import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Entry
 import com.example.bletracker.data.source.network.model.Position
@@ -12,6 +13,7 @@ import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime
 import org.altbeacon.beacon.Beacon
 import java.time.Instant
+import com.example.bletracker.data.ble.toListEntry
 
 interface  LogRepository{
     suspend fun consumeLog() : Entries
@@ -39,7 +41,7 @@ class BLELogRepository ()  : LogRepository {
     //add to log
     override fun appendLog(beacons: Collection<Beacon>) {
         runBlocking {
-            appendLog(beaconToEntry(beacons))
+            appendLog(beacons.toListEntry())
         }
     }
 
@@ -49,21 +51,7 @@ class BLELogRepository ()  : LogRepository {
         }
     }
 
-    private fun beaconToEntry(beacons: Collection<Beacon>): List<Entry> {
-        val entries: List<Entry> = beacons.map {
-            Entry(
-                //use first detection and average location for every beacon
-                time = Instant.ofEpochMilli(it.firstCycleDetectionTimestamp)
-                    .toKotlinInstant().toLocalDateTime(timeZone = TimeZone.currentSystemDefault()),
-                tag = Tag(it.id3.toInt().toUShort(), it.id2.toInt().toUShort(), it.id1.toUuid()),
-                //dist based on rssi running average at,
-                distance = it.distance,
-                //GPS not required atm
-                position = Position(0.0, 0.0)
-            )
-        }
-        return entries
-    }
+
 }
 
 // TODO ADD COROUTINE SCOPE

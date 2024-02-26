@@ -30,19 +30,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.dimensionResource
 import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Entry
 
@@ -59,9 +66,41 @@ fun HomeScreen(
             if (shouldShowPermissions) {
                 PermissionsScreen(onContinueClicked = { shouldShowPermissions = false })
             } else {
-                LocateScreen(locatorUiState = locatorUiState, retryAction = { /*TODO*/ })
+                TabLayout()
             }
         }
     }
+
+
+@Composable
+fun TabLayout(modifier: Modifier = Modifier) {
+    val tabs = listOf("Register Tags", "Locate Tags")
+    val tabIndex = remember {
+        mutableStateOf(value = 0)
+    }
+    Column(modifier = modifier
+        ) {
+        TabRow(selectedTabIndex = tabIndex.value, modifier = modifier.fillMaxWidth()) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = tabIndex.value == index,
+                    onClick = { tabIndex.value = index},
+                    content = {
+                        when (index) {
+                            0 -> Text(title)
+                            1 -> Text(title)
+                        }},
+                    modifier = modifier
+                )
+            }
+        }
+
+        when (tabIndex.value) {
+            0 -> RegisterScreen(registerTagViewModel = , regionViewModel = )
+            1 ->  LocateScreen(locatorUiState = , retryAction = { /*TODO*/ })
+        }
+    }
+}
+
 
 

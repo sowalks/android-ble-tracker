@@ -101,6 +101,8 @@ dependencies {
     implementation("androidx.test:core-ktx:1.5.0")
     implementation ("androidx.test:runner:1.5.2")
     implementation ("androidx.test:rules:1.5.0")
+    //Observe State of live ble data
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
 
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.compose.ui:ui-tooling")
