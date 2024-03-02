@@ -15,92 +15,193 @@
  */
 package com.example.bletracker.ui.screens
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.bletracker.R
-import com.example.bletracker.ui.theme.MarsPhotosTheme
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.bletracker.data.repository.LocatorRepository
+import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Entry
-
-
-@Composable
-fun HomeScreen(
-    locatorUiState: LocatorUiState,
-    retryAction : () -> Unit,
-    modifier: Modifier = Modifier
-) {
-        var shouldShowPermissions by rememberSaveable { mutableStateOf(true) }
-
-        Surface(modifier) {
-            if (shouldShowPermissions) {
-                PermissionsScreen(onContinueClicked = { shouldShowPermissions = false })
-            } else {
-                TabLayout()
-            }
-        }
-    }
-
+import com.example.bletracker.data.source.network.model.LogStatus
+import com.example.bletracker.data.source.network.model.Position
+import com.example.bletracker.data.source.network.model.RegisterStatus
+import com.example.bletracker.data.source.network.model.Registrator
+import com.example.bletracker.data.source.network.model.Tag
+import kotlinx.datetime.LocalDateTime
+import org.altbeacon.beacon.AltBeacon
+import org.altbeacon.beacon.Beacon
+import org.altbeacon.beacon.RegionViewModel
+import java.util.UUID
 
 @Composable
-fun TabLayout(modifier: Modifier = Modifier) {
+fun ScreenTabLayout(locatorViewModel: LocateViewModel,
+                        registerTagViewModel: RegisterTagViewModel,
+                        regionViewModel:RegionViewModel,
+                        snackBarHostState : SnackbarHostState,
+                        modifier: Modifier = Modifier) {
     val tabs = listOf("Register Tags", "Locate Tags")
     val tabIndex = remember {
         mutableStateOf(value = 0)
     }
     Column(modifier = modifier
         ) {
-        TabRow(selectedTabIndex = tabIndex.value, modifier = modifier.fillMaxWidth()) {
+        TabRow(selectedTabIndex = tabIndex.value, modifier = Modifier
+            .fillMaxWidth()) {
             tabs.forEachIndexed { index, title ->
                 Tab(
                     selected = tabIndex.value == index,
                     onClick = { tabIndex.value = index},
                     content = {
                         when (index) {
-                            0 -> Text(title)
-                            1 -> Text(title)
+                            0 -> Text(title, style = MaterialTheme.typography.headlineSmall)
+                            1 -> Text(title, style = MaterialTheme.typography.headlineSmall)
                         }},
-                    modifier = modifier
+                    modifier = modifier.padding(vertical = 24.dp)
                 )
             }
         }
+        //TODO
+        val tags = remember {
 
+         mutableStateOf( listOf<Beacon>(
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+                .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+                .setId2("3").setId3("4").setRssi(-20).setTxPower(-15).build() ,
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+                .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+                .setId2("3").setId3("4").setRssi(-20).setTxPower(-15).build(),
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+                .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+                .setId2("3").setId3("4").setRssi(-20).setTxPower(-15).build(),
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+                .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+                .setId2("3").setId3("4").setRssi(-20).setTxPower(-15).build(),
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+            .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
+            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
+                .setId2("3").setId3("9").setRssi(-20).setTxPower(-15).build()))}
         when (tabIndex.value) {
-            0 -> RegisterScreen(registerTagViewModel = , regionViewModel = )
-            1 ->  LocateScreen(locatorUiState = , retryAction = { /*TODO*/ })
+            0 -> RegisterScreen(registerTagViewModel = registerTagViewModel, localTags = tags
+                /*regionViewModel.rangedBeacons.observeAsState(initial = mutableListOf<Beacon>())*/, snackBarHostState = snackBarHostState)
+            1 -> LocateScreen(locatorViewModel = locatorViewModel)
         }
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun AppPreview(){
+    val regionViewModel =  RegionViewModel()
+    ScreenTabLayout(
+        locatorViewModel = LocateViewModel(FakeNetworkLocatorRepository()),
+        registerTagViewModel = RegisterTagViewModel(FakeNetworkLocatorRepository()),
+        regionViewModel = RegionViewModel(),
+        snackBarHostState = SnackbarHostState(),
+      )
+}
+
+class FakeNetworkLocatorRepository(): LocatorRepository {
+    override suspend fun getLocations(): Entries {
+        return FakeDataSource.locatorEntries
+    }
+
+    override suspend fun getDeviceID(): DeviceID {
+        return FakeDataSource.deviceID
+    }
 
 
+    override suspend fun submitLog(entries: Entries): List<Int> {
+        return FakeDataSource.logStatusSuccess.status
+    }
+
+    override suspend fun registerTag(tag: Tag, mode: Boolean): Int {
+        return FakeDataSource.registerStatusSuccess.status
+    }
+}
+
+
+object FakeDataSource {
+
+    val deviceID = DeviceID(2)
+
+    val locatorEntries= Entries(listOf(
+        Entry(
+            time= LocalDateTime(2024,12,14,9,55,0) ,
+            tag  =  Tag(0U,0U, UUID(0,0)),
+            tagID = 1,
+            distance =  3.0,
+            position = Position(0.456,0.3456)
+        ),
+        Entry(
+            time= LocalDateTime(2025,12,14,9,55,0) ,
+            tag  =  Tag(0U,0U, UUID(0,0)),
+            tagID = 3,
+            distance =  4.0,
+            position = Position(0.456,0.3456)
+        )
+    )
+    )
+    val logEntries= Entries(listOf(
+        Entry(
+            time= LocalDateTime(2021,1,22,12,30,12) ,
+            tag  =  Tag(43U,1026U, UUID(654,2222)),
+            tagID = 0,
+            distance =  4.4,
+            position = Position(52.19,0.56)
+        ),
+        Entry(
+            time= LocalDateTime(2021,2, 21,9,20,11) ,
+            tag  =  Tag(1234U,12U, UUID(653,2245)),
+            tagID = 0,
+            distance =  4.4,
+            position = Position(52.19,0.56)
+        ),
+        Entry(
+            time= LocalDateTime(2011,2, 21,9,20,11) ,
+            tag  =  Tag(1234U,12U, UUID(653,2245)),
+            tagID = 0,
+            distance =  4.4,
+            position = Position(52.19,0.56)
+        )
+    )
+    )
+    val  registerStatusSuccess = RegisterStatus(35)
+    val  registerStatusFail1 = RegisterStatus(-1)
+    val  registerStatusFail12= RegisterStatus(-2)
+
+    val  logStatusSuccess = LogStatus(listOf(0,0,0))
+    val  logStatusFail1 = LogStatus(listOf(0,-1,-1))
+    val  logStatusFail12= LogStatus(listOf(-1,-1,-1))
+
+    val  logStatusDuplicate1 = LogStatus(listOf(-2,-2,-2))
+    val  logStatusDuplicate2=  LogStatus(listOf(0,-1,-2))
+
+    val registrator = Registrator(
+        tag  =  Tag(43U,1026U, UUID(654,2222)),
+        deviceId = 5,
+        mode = true
+    )
+
+
+
+}

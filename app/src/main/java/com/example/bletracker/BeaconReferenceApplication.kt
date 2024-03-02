@@ -13,11 +13,12 @@ import com.example.bletracker.data.repository.NetworkLocatorRepository
 import kotlinx.coroutines.runBlocking
 import org.altbeacon.beacon.Region
 import java.io.FileOutputStream
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class BeaconReferenceApplication : Application() {
     lateinit var container: AppContainer
-    val executor = Executors.newFixedThreadPool(1)
+    val executor: ExecutorService = Executors.newFixedThreadPool(1)
 
     override fun onCreate() {
         super.onCreate()

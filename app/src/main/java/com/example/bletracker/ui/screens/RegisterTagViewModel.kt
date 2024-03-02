@@ -21,6 +21,7 @@ import java.io.IOException
 sealed interface  RegisterUiState {
         data class Success(val tagID : Int) : RegisterUiState
         data class Error(val msg: String) : RegisterUiState
+        object Idle : RegisterUiState
         object Loading: RegisterUiState
 }
 
@@ -36,7 +37,14 @@ fun registerTag(tag:Tag) {
         viewModelScope.launch{
                 registerUiState = RegisterUiState.Loading
                 registerUiState = try {
-                        RegisterUiState.Success(locatorRepository.registerTag(tag=tag,mode=true))}
+                        val status = locatorRepository.registerTag(tag=tag,mode=true)
+                        when{
+                                //Already registered
+                                status == -2 ->  RegisterUiState.Error("Register Failed.")
+                                status == -1 ->  RegisterUiState.Error("Register Failed, Try again.")
+                                else ->  RegisterUiState.Success(status)
+                        }
+                }
                 catch(e : IOException){
                         RegisterUiState.Error(e.toString())
                 }

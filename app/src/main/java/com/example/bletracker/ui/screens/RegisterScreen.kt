@@ -18,40 +18,61 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.example.bletracker.data.source.network.model.Entry
 import com.example.bletracker.data.source.network.model.Position
 import com.example.bletracker.data.source.network.model.Tag
 import kotlinx.datetime.LocalDateTime
-import org.altbeacon.beacon.RegionViewModel
 import java.util.UUID
 import com.example.bletracker.data.ble.toListEntry
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.altbeacon.beacon.Beacon
 
 
 @Composable
 fun RegisterScreen(
-                        registerTagViewModel: RegisterTagViewModel,
-                        regionViewModel: RegionViewModel,
-                        modifier: Modifier = Modifier,
-                        retryAction: () -> Unit,
+    registerTagViewModel: RegisterTagViewModel,
+    localTags: State<Collection<Beacon>>,
+    modifier: Modifier = Modifier,
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    snackBarHostState: SnackbarHostState
 ) {
     //Get state of tags, refresh when detected tags change
-val localTags = regionViewModel.rangedBeacons.observeAsState(initial = mutableListOf<Beacon>())
-val uiState = registerTagViewModel.registerUiState
-BLELocalTags(tags =localTags.value.toListEntry(), registerTag = registerTagViewModel::registerTag,modifier=modifier)
-    when (uiState) {
-        is RegisterUiState.Success -> BLEResultScreen(
-            registerUiState.tags, modifier = modifier.fillMaxWidth()
-        )
-        is RegisterUiState.Loading ->
-        is RegisterUiState.Error -> ErrorScreen(retryAction,uiState.msg, modifier = modifier.fillMaxSize())
-    }
+BLELocalTags(tags =localTags.value.toListEntry(), registerTag ={
+    registerTagViewModel.registerTag(it)
+    val uiState =  registerTagViewModel.registerUiState
+    when (uiState ) {
+        is RegisterUiState.Idle -> {}
+        is RegisterUiState.Success ->  {
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    "Tag ${uiState.tagID} Registered"
+                )
+            }
+        }
+        is RegisterUiState.Loading -> {
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    "Registering...."
+                )
+            }
+        }
+        is RegisterUiState.Error ->   {
+            coroutineScope.launch() {
+                snackBarHostState.showSnackbar(
+                    uiState.msg)
+            }
+        }
+    } },modifier=modifier)
+
 }
-}
+
 /**
  * ResultScreen displaying number of photos retrieved.
  */
@@ -61,9 +82,9 @@ fun BLELocalTags(tags: List<Entry>, registerTag: (Tag) -> Unit, modifier: Modifi
     {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = modifier
+            modifier = modifier.padding(vertical=24.dp)
         ) {
-            Text(text = "Owned Tags could not be Located")
+            Text(text = "No Nearby Tags")
         }
     }
     else {
@@ -80,7 +101,7 @@ private fun BLETagDisplay(
     tag: Entry,
     registerTag : (Tag) -> Unit,
     modifier: Modifier = Modifier) {
-    var showDialog = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
     if (showDialog.value) {
         RegisterTagDialog(
             tag = tag.tag,
@@ -109,8 +130,6 @@ private fun BLETagDisplay(
     @Composable
     fun RegisterTagDialog(tag: Tag, showDialog: Boolean, onConfirm: (Tag)->Unit, onDismiss: () -> Unit,) {
         if (showDialog) {
-            onConfirm(tag)
-            onDismiss
             AlertDialog(
                 title = { Text("Register this Tag?") },
                 text = { Text("UUID: ${tag.uuid} Major: ${tag.major}, Minor: ${tag.minor}") },
@@ -136,7 +155,14 @@ fun BLEResultScreenPreview() {
                 tagID = 1,
                 distance =  3.0,
                 position = Position(0.456,0.3456)
-            )
+            ),
+                    Entry(
+                    time= LocalDateTime(2025,12,14,9,55,0) ,
+            tag  =  Tag(0U,0U, UUID(0,0)),
+            tagID = 1,
+            distance =  3.0,
+            position = Position(0.456,0.3456)
+        )
         ), registerTag = {}, modifier = Modifier.fillMaxWidth())
 }
 

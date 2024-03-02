@@ -11,5 +11,4 @@ class MarsPhotosApplication : Application() {
         super.onCreate()
         container = DefaultAppContainer(applicationContext)
     }
-
 }

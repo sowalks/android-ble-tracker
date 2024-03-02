@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bletracker.MarsPhotosApplication
 import com.example.bletracker.data.repository.LocatorRepository
 import com.example.bletracker.data.source.network.model.Entries
 import kotlinx.coroutines.launch
@@ -17,10 +16,11 @@ import android.util.Log
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.bletracker.BeaconReferenceApplication
+import com.example.bletracker.MarsPhotosApplication
 
 
 sealed interface   LocatorUiState {
-    data class Success(val tags: Entries) : LocatorUiState
+    object Success : LocatorUiState
     data class Error(val msg: String) : LocatorUiState
     object Loading : LocatorUiState
 }
@@ -33,6 +33,7 @@ class LocateViewModel(private val locatorRepository: LocatorRepository) : ViewMo
     /**
      * Call getMarsPhotos() on init so we can display status immediately.
      */
+    var tags: Entries by mutableStateOf(Entries(emptyList()))
     init {
         getOwnedTags()
     }
@@ -41,7 +42,9 @@ class LocateViewModel(private val locatorRepository: LocatorRepository) : ViewMo
         viewModelScope.launch{
             locatorUiState = LocatorUiState.Loading
             locatorUiState = try {
-               LocatorUiState.Success(locatorRepository.getLocations())}
+                tags = locatorRepository.getLocations()
+                LocatorUiState.Success
+            }
             catch(e : IOException){
                 Log.d(TAG, e.toString())
                 LocatorUiState.Error("IO Error")
@@ -53,13 +56,17 @@ class LocateViewModel(private val locatorRepository: LocatorRepository) : ViewMo
         }
     }
 
-    companion object {
+    fun setTagMode(tagID: Int)
+    {
+//TODO HERE AND SERVER
+    }
+    companion object {//TODO CHANGE
         val TAG = "LocateViewModel"
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)
+                val application = (this[APPLICATION_KEY] as MarsPhotosApplication)
                 val locatorRepository = application.container.locatorRepository
-                MarsViewModel(locatorRepository = locatorRepository)
+               LocateViewModel(locatorRepository = locatorRepository)
             }
         }
     }

@@ -62,23 +62,25 @@ import java.util.UUID
 
 @Composable
 fun LocateScreen(
-    locatorUiState: LocatorUiState,
-    retryAction : () -> Unit,
+    locatorViewModel: LocateViewModel,
     modifier: Modifier = Modifier
 ) {
-    when (locatorUiState) {
-        is LocatorUiState.Success -> ResultScreen(
-            locatorUiState.tags, modifier = modifier.fillMaxWidth()
+
+    when (locatorViewModel.locatorUiState) {
+        is LocatorUiState.Success-> ResultScreen(
+            locatorViewModel.tags, setMode = {tagID -> locatorViewModel.setTagMode(tagID) }, modifier = modifier.fillMaxWidth()
         )
         is LocatorUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is LocatorUiState.Error -> ErrorScreen(retryAction,locatorUiState.msg, modifier = modifier.fillMaxSize())
+        is LocatorUiState.Error -> {
+            ErrorScreen({ locatorViewModel.getOwnedTags() },"Try again", modifier = modifier.fillMaxSize())
+        }
     }
 }
 /**
  * ResultScreen displaying number of photos retrieved.
  */
 @Composable
-fun ResultScreen(tags: Entries, modifier: Modifier = Modifier) {
+fun ResultScreen(tags: Entries, setMode: (Int)->Unit,modifier: Modifier = Modifier) {
     if(tags.entries.isEmpty())
     {
         Box(
@@ -91,7 +93,7 @@ fun ResultScreen(tags: Entries, modifier: Modifier = Modifier) {
     else {
         LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
             items(items = tags.entries) { tag ->
-                TagDisplay(tag = tag, modifier = modifier)
+                OwnedTagDisplay(tag = tag, setMode = setMode, modifier = modifier)
             }
             }
         }
@@ -99,7 +101,8 @@ fun ResultScreen(tags: Entries, modifier: Modifier = Modifier) {
 
 
 @Composable
-private fun TagDisplay(tag: Entry,
+private fun OwnedTagDisplay(tag: Entry,
+                            setMode: (Int)->Unit,
                        modifier: Modifier = Modifier){
     var showDialog = remember { mutableStateOf(false) }
     //set mode when button clicked
@@ -107,7 +110,8 @@ private fun TagDisplay(tag: Entry,
         SetModeDialog(
             tagID = tag.tagID,
             showDialog = showDialog.value,
-            onDismiss = {showDialog.value = false})}
+            onDismiss = {showDialog.value = false},
+            onConfirm =setMode) }
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp)
@@ -119,6 +123,7 @@ private fun TagDisplay(tag: Entry,
             ) {
                 Text(text = tag.tagID.toString())
                 Text(text = "Last seen ${tag.distance} from ${tag.position} at ${tag.time}")
+                //TODO ADD MODE
             }
             ElevatedButton(onClick = {showDialog.value = true}){
                 Text("Set Mode")
@@ -157,7 +162,7 @@ fun ErrorScreen(retryAction: () -> Unit, msg : String, modifier: Modifier = Modi
 
 
 @Composable
-fun SetModeDialog(tagID: Int, showDialog: Boolean, onDismiss : () -> Unit){
+fun SetModeDialog(tagID: Int, showDialog: Boolean, onConfirm: (Int)->Unit,onDismiss : () -> Unit){
     if(showDialog) {
         var modeState by remember { mutableStateOf(true) }
         AlertDialog(
@@ -175,8 +180,11 @@ fun SetModeDialog(tagID: Int, showDialog: Boolean, onDismiss : () -> Unit){
                     }
                 }
             },
-            onDismissRequest = { onDismiss },
-            confirmButton = {Button(onClick ={/*TODO FOR VIEW MODEL*/}){Text("SET MODE")}},
+            onDismissRequest = { onDismiss() },
+            confirmButton = {Button(onClick ={
+                    onConfirm(tagID)
+                    onDismiss()
+            }){Text("SET MODE")}},
             dismissButton = {Button(onClick = onDismiss){Text("CANCEL")} }
             )
     }
@@ -195,11 +203,11 @@ fun ResultScreenPreview() {
             distance =  3.0,
             position = Position(0.456,0.3456)
         )
-    )),modifier = Modifier.fillMaxWidth())}
+    )),setMode ={},modifier = Modifier.fillMaxWidth())}
 
 @Preview(showBackground = true)
 @Composable
 fun DialogPreview() {
-    SetModeDialog(tagID = 6, showDialog = true) {
+    SetModeDialog(tagID = 6, onConfirm = {}, showDialog = true) {
     }
 }

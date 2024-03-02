@@ -3,16 +3,12 @@ package com.example.bletracker.data.ble
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.Observer
 import com.example.bletracker.R
-import com.example.bletracker.RegisterActivity
-import com.example.bletracker.data.repository.BLELogRepository
 import com.example.bletracker.data.repository.LogRepository
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
@@ -84,12 +80,12 @@ class BLEHelper(private val context: Context, private val logRepository: LogRepo
     override fun setupForegroundService() {
         val builder = Notification.Builder(context, "BeaconReferenceApp")
         builder.setSmallIcon(R.drawable.ic_launcher_background)
-        builder.setContentTitle("Scanning for Beacons")
+        builder.setContentTitle("Scanning for Beacons")/* TODO: FIX /REMOVE
         val intent = Intent(context, RegisterActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
         )
-        builder.setContentIntent(pendingIntent)
+        builder.setContentIntent(pendingIntent)*/
         val channel =  NotificationChannel("beacon-ref-notification-id",
             "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT)
         channel.description = "My Notification Channel Description"
@@ -103,14 +99,14 @@ class BLEHelper(private val context: Context, private val logRepository: LogRepo
     private val centralRangingObserver = Observer<Collection<Beacon>> { beacons ->
         val rangeAgeMillis = System.currentTimeMillis() - (beacons.firstOrNull()?.lastCycleDetectionTimestamp ?: 0)
         if (rangeAgeMillis < CYCLE_PERIOD) {
-            Log.d(RegisterActivity.TAG, "Ranged: ${beacons.count()} beacons")
+            Log.d(TAG, "Ranged: ${beacons.count()} beacons")
             for (beacon: Beacon in beacons) {
                 Log.d(TAG, "$beacon about ${beacon.distance} meters away")
             }
                 logRepository.appendLog(beacons)
         }
         else {
-            Log.d(RegisterActivity.TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
+            Log.d(TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
         }
     }
 
