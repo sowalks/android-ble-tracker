@@ -16,7 +16,8 @@ import android.util.Log
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.bletracker.BeaconReferenceApplication
-import com.example.bletracker.MarsPhotosApplication
+import com.example.bletracker.data.source.network.model.DeviceID
+import java.net.ConnectException
 
 
 sealed interface   LocatorUiState {
@@ -34,41 +35,44 @@ class LocateViewModel(private val locatorRepository: LocatorRepository) : ViewMo
      * Call getMarsPhotos() on init so we can display status immediately.
      */
     var tags: Entries by mutableStateOf(Entries(emptyList()))
+
     init {
         getOwnedTags()
     }
 
     fun getOwnedTags() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             locatorUiState = LocatorUiState.Loading
             locatorUiState = try {
                 tags = locatorRepository.getLocations()
                 LocatorUiState.Success
             }
-            catch(e : IOException){
+            catch (e: IOException) {
                 Log.d(TAG, e.toString())
                 LocatorUiState.Error("IO Error")
-            }
-            catch(e : HttpException){
+            } catch (e: HttpException) {
                 Log.d(TAG, e.message())
                 LocatorUiState.Error("Http Error")
             }
         }
     }
 
-    fun setTagMode(tagID: Int)
-    {
+    fun setTagMode(tagID: Int) {
 //TODO HERE AND SERVER
     }
-    companion object {//TODO CHANGE
+
+    companion object {
         val TAG = "LocateViewModel"
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as MarsPhotosApplication)
+                val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)
                 val locatorRepository = application.container.locatorRepository
-               LocateViewModel(locatorRepository = locatorRepository)
+                LocateViewModel(locatorRepository = locatorRepository)
             }
         }
     }
-
 }
+
+
+
+

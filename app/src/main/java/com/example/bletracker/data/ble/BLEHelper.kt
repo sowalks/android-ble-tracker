@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.lifecycle.Observer
 import com.example.bletracker.R
 import com.example.bletracker.data.repository.LogRepository
+import kotlinx.coroutines.runBlocking
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.BeaconParser
@@ -103,7 +104,9 @@ class BLEHelper(private val context: Context, private val logRepository: LogRepo
             for (beacon: Beacon in beacons) {
                 Log.d(TAG, "$beacon about ${beacon.distance} meters away")
             }
-                logRepository.appendLog(beacons)
+            runBlocking {
+                logRepository.appendLog(beacons.toListEntry())
+            }
         }
         else {
             Log.d(TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")

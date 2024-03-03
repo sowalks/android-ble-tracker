@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bletracker.data.repository.LocatorRepository
 import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Entries
@@ -50,11 +51,13 @@ import org.altbeacon.beacon.RegionViewModel
 import java.util.UUID
 
 @Composable
-fun ScreenTabLayout(locatorViewModel: LocateViewModel,
-                        registerTagViewModel: RegisterTagViewModel,
-                        regionViewModel:RegionViewModel,
+fun ScreenTabLayout(regionViewModel:RegionViewModel,
                         snackBarHostState : SnackbarHostState,
-                        modifier: Modifier = Modifier) {
+                        modifier: Modifier = Modifier,
+                       locatorViewModel: LocateViewModel = viewModel(factory=LocateViewModel.Factory),
+                      registerTagViewModel: RegisterTagViewModel = viewModel(factory=RegisterTagViewModel.Factory)
+) {
+
     val tabs = listOf("Register Tags", "Locate Tags")
     val tabIndex = remember {
         mutableStateOf(value = 0)
@@ -76,33 +79,10 @@ fun ScreenTabLayout(locatorViewModel: LocateViewModel,
                 )
             }
         }
-        //TODO
-        val tags = remember {
-
-         mutableStateOf( listOf<Beacon>(
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-                .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-                .setId2("3").setId3("4").setRssi(-20).setTxPower(-15).build() ,
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-                .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-                .setId2("3").setId3("4").setRssi(-20).setTxPower(-15).build(),
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-                .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-                .setId2("3").setId3("4").setRssi(-20).setTxPower(-15).build(),
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-                .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-                .setId2("3").setId3("4").setRssi(-20).setTxPower(-15).build(),
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-            .setId2("1").setId3("1").setRssi(-55).setTxPower(-55).build(),
-            AltBeacon.Builder().setId1("DF7E1C79-43E9-44FF-886F-1D1F7DA6997A")
-                .setId2("3").setId3("9").setRssi(-20).setTxPower(-15).build()))}
         when (tabIndex.value) {
-            0 -> RegisterScreen(registerTagViewModel = registerTagViewModel, localTags = tags
-                /*regionViewModel.rangedBeacons.observeAsState(initial = mutableListOf<Beacon>())*/, snackBarHostState = snackBarHostState)
+            0 -> RegisterScreen(registerTagViewModel = registerTagViewModel,
+                localTags = regionViewModel.rangedBeacons.observeAsState(initial = mutableListOf()),
+                snackBarHostState = snackBarHostState)
             1 -> LocateScreen(locatorViewModel = locatorViewModel)
         }
     }
@@ -113,22 +93,18 @@ fun ScreenTabLayout(locatorViewModel: LocateViewModel,
 fun AppPreview(){
     val regionViewModel =  RegionViewModel()
     ScreenTabLayout(
-        locatorViewModel = LocateViewModel(FakeNetworkLocatorRepository()),
-        registerTagViewModel = RegisterTagViewModel(FakeNetworkLocatorRepository()),
         regionViewModel = RegionViewModel(),
         snackBarHostState = SnackbarHostState(),
-      )
+        locatorViewModel = LocateViewModel(FakeNetworkLocatorRepository()),
+        registerTagViewModel = RegisterTagViewModel(FakeNetworkLocatorRepository()),
+
+        )
 }
 
 class FakeNetworkLocatorRepository(): LocatorRepository {
     override suspend fun getLocations(): Entries {
         return FakeDataSource.locatorEntries
     }
-
-    override suspend fun getDeviceID(): DeviceID {
-        return FakeDataSource.deviceID
-    }
-
 
     override suspend fun submitLog(entries: Entries): List<Int> {
         return FakeDataSource.logStatusSuccess.status

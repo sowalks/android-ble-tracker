@@ -5,14 +5,15 @@ import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Registrator
 import com.example.bletracker.data.source.network.model.Tag
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
 interface LocatorRepository {
     suspend fun getLocations() : Entries
     suspend fun submitLog(entries : Entries) : List<Int>
-    suspend fun registerTag(tag : Tag, mode:Boolean) : Int
-    suspend fun getDeviceID(): DeviceID
+    suspend fun registerTag(tag : Tag,mode:Boolean) : Int
 }
 
 class NetworkLocatorRepository(
@@ -20,27 +21,23 @@ class NetworkLocatorRepository(
     private val localDeviceIDRepository : LocalDeviceIDRepository
 ): LocatorRepository {
 
-    // Must have a valid deviceID on initialization
-    // Therefore it is blocking
-    private val deviceID: DeviceID = runBlocking {
-        var testID = localDeviceIDRepository.get()
-        if(testID.deviceID < 0)
-        {
-            testID = locatorApiService.getDeviceID()
-            localDeviceIDRepository.set(testID)
-        }
-        testID
-    }
-    override suspend fun getDeviceID(): DeviceID {
-        return deviceID
+
+    private suspend fun getDeviceID(): DeviceID {
+            var testID = localDeviceIDRepository.get()
+            if(testID.deviceID < 0)
+            {
+                testID = locatorApiService.getDeviceID()
+                localDeviceIDRepository.set(testID)
+            }
+        return  testID
     }
 
     override suspend fun getLocations(): Entries {
-        return locatorApiService.getLocations(deviceID)
+        return locatorApiService.getLocations(getDeviceID())
     }
 
-    override suspend fun registerTag(tag : Tag, mode:Boolean): Int {
-        return locatorApiService.registerTag(Registrator(tag,deviceID.deviceID,mode)).status
+    override suspend fun registerTag(tag : Tag,mode:Boolean): Int {
+        return locatorApiService.registerTag(Registrator(tag,getDeviceID().deviceID,mode)).status
     }
 
     override suspend fun submitLog(entries: Entries): List<Int> {

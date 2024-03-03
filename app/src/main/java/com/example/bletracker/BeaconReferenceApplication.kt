@@ -10,15 +10,21 @@ import com.example.bletracker.data.repository.BLELogRepository
 import com.example.bletracker.data.repository.LocatorRepository
 import com.example.bletracker.data.repository.LogRepository
 import com.example.bletracker.data.repository.NetworkLocatorRepository
+import com.example.bletracker.ui.screens.LocateViewModel
+import com.example.bletracker.ui.screens.LocatorUiState
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.altbeacon.beacon.Region
+import retrofit2.HttpException
 import java.io.FileOutputStream
+import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class BeaconReferenceApplication : Application() {
     lateinit var container: AppContainer
-    val executor: ExecutorService = Executors.newFixedThreadPool(1)
+    private val executor: ExecutorService = Executors.newFixedThreadPool(1)
 
     override fun onCreate() {
         super.onCreate()
@@ -27,26 +33,40 @@ class BeaconReferenceApplication : Application() {
         // more regularly than ~15 minutes w/ Android killing it
         executor.execute(Runnable{
             while (true) {
-                val beacons = runBlocking {
-                   container.logRepository.consumeLog()
-                }
-                val success = runBlocking {
-                    container.locatorRepository.submitLog(beacons)
-                }
-                if(success.contains(-1)){
+                    val beacons =
+                        runBlocking {
+                            container.logRepository.consumeLog()
+                        }
+
+                    val success =
+                        runBlocking {
+                            try {
+                                container.locatorRepository.submitLog(beacons)
+                            } catch (e: IOException) {
+                                Log.d(TAG, e.toString())
+                               listOf(-2)
+                            } catch (e: HttpException) {
+                                Log.d(TAG, e.message())
+                                listOf(-2)
+                            }
+                        }
+
+
+                if (success.contains(-1)) {
                     Log.d(TAG, "Error in submitting log of ${success.size} beacons")
+                }
+                else if(success.size ==  1 && success[0] == -2)
+                {
+                    Log.d(TAG, "Connection Error")
                 }
                 Log.d(TAG, "I will log this line every $LOGGING_PERIOD forever")
                 Thread.sleep(LOGGING_PERIOD)
                 // FileOutputStream( "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/log=_10sec.csv",true ).writeCsv(beacons)
             }
+
         })
 
-        setupBeaconScanning()
-    }
-
-    fun setupBeaconScanning() {
-        return container.bleHelper.setupBeaconScanning()
+        container.bleHelper.setupBeaconScanning()
     }
 
     companion object {
@@ -55,3 +75,4 @@ class BeaconReferenceApplication : Application() {
     }
 
 }
+//TODO CHANGE RUNBLOCKING COROUTINE SCOPE

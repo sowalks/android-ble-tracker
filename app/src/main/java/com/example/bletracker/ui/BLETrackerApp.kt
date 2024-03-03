@@ -33,11 +33,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bletracker.data.PermissionGroup
 import com.example.bletracker.data.PermissionManager
 import com.example.bletracker.data.State
+import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.ui.screens.FakeNetworkLocatorRepository
 import com.example.bletracker.ui.screens.LocateViewModel
 import com.example.bletracker.ui.screens.PermissionScreen
 import com.example.bletracker.ui.screens.PermissionViewModel
-import com.example.bletracker.ui.screens.PermissionViewModelFactory
 import com.example.bletracker.ui.screens.RegisterTagViewModel
 import com.example.bletracker.ui.screens.ScreenTabLayout
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,22 +60,16 @@ fun BLETrackerApp(regionViewModel: RegionViewModel,permissionManager: Permission
                 .fillMaxSize()
                 .padding(it)
         ) {
-            //TODO CHANGE BACK
-            val locatorViewModel: LocateViewModel =
-                LocateViewModel(FakeNetworkLocatorRepository())//viewModel(factory=LocateViewModel.Factory)
-            val registerViewModel: RegisterTagViewModel =
-                RegisterTagViewModel(FakeNetworkLocatorRepository())//viewModel(factory=RegisterTagViewModel.Factory)
+
             val permissionsViewModel: PermissionViewModel =
-                viewModel(factory = PermissionViewModelFactory(permissions = permissionManager).Factory)
+                viewModel(factory = PermissionViewModel.Factory(permissions = permissionManager).Factory)
             val permissionsGranted =
                 permissionsViewModel.uiState.collectAsState().value.hasAllAccess
             if (!permissionsGranted) {
                 PermissionScreen(viewModel = permissionsViewModel, onConfirm = {})
             } else {
                 ScreenTabLayout(
-                    locatorViewModel = locatorViewModel,
                     regionViewModel = regionViewModel,
-                    registerTagViewModel = registerViewModel,
                     snackBarHostState = snackBarHostState,
                     modifier = Modifier.fillMaxSize()
                 )

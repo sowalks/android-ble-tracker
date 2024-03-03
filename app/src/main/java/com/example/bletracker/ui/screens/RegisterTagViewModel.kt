@@ -11,8 +11,9 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bletracker.MarsPhotosApplication
+import com.example.bletracker.BeaconReferenceApplication
 import com.example.bletracker.data.repository.LocatorRepository
+import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Tag
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -53,12 +54,20 @@ fun registerTag(tag:Tag) {
                 }
         }
 }
+companion object{
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+                initializer {
+                        val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)
+                        val locatorRepository = application.container.locatorRepository
+                        RegisterTagViewModel(locatorRepository = locatorRepository)
+                }
+        }
+}
 
-
-companion object {
+class Factory(deviceID: DeviceID){
                 val Factory: ViewModelProvider.Factory = viewModelFactory {
                         initializer {
-                                val application = (this[APPLICATION_KEY] as MarsPhotosApplication)
+                                val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)
                                 val locatorRepository = application.container.locatorRepository
                                 RegisterTagViewModel(locatorRepository = locatorRepository)
                         }

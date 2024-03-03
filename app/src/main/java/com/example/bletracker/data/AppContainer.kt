@@ -33,7 +33,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "de
 class DefaultAppContainer(context : Context) : AppContainer {
 
     private val baseURL =
-        "http://127.0.0.1:5000"
+        "https://127.0.0.1:5000"
 
     //convert to json -  serializer defined. Use httpclient for ssl + baseurl of server
     private val retrofit: Retrofit = Retrofit.Builder()
@@ -55,7 +55,6 @@ class DefaultAppContainer(context : Context) : AppContainer {
     override val locatorRepository: LocatorRepository by lazy {
         NetworkLocatorRepository(retrofitService,deviceIDRepository)
     }
-
     // the region definition ensures we are looking for any possible iBeacon
     override val region : Region by lazy {Region("all-beacons", null, null, null)}
 

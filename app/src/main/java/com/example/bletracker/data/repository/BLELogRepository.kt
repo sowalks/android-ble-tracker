@@ -17,7 +17,6 @@ import com.example.bletracker.data.ble.toListEntry
 
 interface  LogRepository{
     suspend fun consumeLog() : Entries
-    fun appendLog(entries: Collection<Beacon>)
     suspend fun appendLog(entries: List<Entry>)
 }
 class BLELogRepository ()  : LogRepository {
@@ -38,20 +37,11 @@ class BLELogRepository ()  : LogRepository {
         return Entries(logCopy)
     }
 
-    //add to log
-    override fun appendLog(beacons: Collection<Beacon>) {
-        runBlocking {
-            appendLog(beacons.toListEntry())
-        }
-    }
-
     override suspend fun appendLog(entries: List<Entry>) {
         logMutex.withLock {
             this.recentTagLog.addAll(entries)
         }
     }
 
-
 }
 
-// TODO ADD COROUTINE SCOPE

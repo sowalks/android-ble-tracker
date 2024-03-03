@@ -3,7 +3,6 @@ package com.example.bletracker.ui.screens
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bletracker.MarsPhotosApplication
 
 
 /*
@@ -39,11 +38,11 @@ class PermissionViewModel(val permissions: PermissionManager) : ViewModel() {
         return permissions.createSettingsIntent()
     }
 
-}
-class PermissionViewModelFactory(permissions: PermissionManager){
+    class Factory(permissions: PermissionManager) {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                PermissionViewModel(permissions=permissions)
+                PermissionViewModel(permissions = permissions)
             }
         }
+    }
 }
