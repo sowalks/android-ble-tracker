@@ -17,7 +17,11 @@ import com.example.bletracker.data.source.network.LocatorApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import org.altbeacon.beacon.Region
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLSession
+
 
 
 interface AppContainer {
@@ -33,10 +37,17 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "de
 class DefaultAppContainer(context : Context) : AppContainer {
 
     private val baseURL =
-        "https://127.0.0.1:5000"
+        "https://10.0.2.2:5000"
 
+    //dev client to not have to worry ab self certified certificate
+    private val okhttpClientDev = OkHttpClient.Builder()
+        .hostnameVerifier(HostnameVerifier {_,_->
+            true
+        })
+        .build()
     //convert to json -  serializer defined. Use httpclient for ssl + baseurl of server
     private val retrofit: Retrofit = Retrofit.Builder()
+        .client(okhttpClientDev)
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(baseURL)
         .build()

@@ -20,6 +20,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 import com.example.bletracker.data.ble.toListEntry
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.bletracker.data.ble.BeaconRangingSmoother
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.altbeacon.beacon.Beacon
@@ -44,41 +46,45 @@ fun RegisterScreen(
     snackBarHostState: SnackbarHostState
 ) {
     //Get state of tags, refresh when detected tags change
-BLELocalTags(tags =localTags.value.toListEntry(), registerTag ={
-    registerTagViewModel.registerTag(it)
-    val uiState =  registerTagViewModel.registerUiState
+    val smoothTags =  registerTagViewModel.smoothBeacons(localTags.value)
+    val uiState = registerTagViewModel.registerUiState
     when (uiState ) {
         is RegisterUiState.Idle -> {}
         is RegisterUiState.Success ->  {
-            coroutineScope.launch {
+            LaunchedEffect(coroutineScope) {
                 snackBarHostState.showSnackbar(
                     "Tag ${uiState.tagID} Registered"
                 )
+                registerTagViewModel.userNotified()
             }
         }
         is RegisterUiState.Loading -> {
-            coroutineScope.launch {
+            LaunchedEffect(coroutineScope) {
                 snackBarHostState.showSnackbar(
                     "Registering...."
                 )
+                registerTagViewModel.userNotified()
             }
         }
-        is RegisterUiState.Error ->   {
-            coroutineScope.launch() {
+        is RegisterUiState.Error -> {
+            LaunchedEffect(coroutineScope) {
                 snackBarHostState.showSnackbar(
-                    uiState.msg)
+                    " ${uiState.msg}"
+                )
+               registerTagViewModel.userNotified()
             }
+
         }
-    } },modifier=modifier)
+    }
+BLELocalTags(entries =smoothTags.toListEntry(), registerTag ={
+    registerTagViewModel.registerTag(it)
+     },modifier=modifier)
 
 }
 
-/**
- * ResultScreen displaying number of photos retrieved.
- */
 @Composable
-fun BLELocalTags(tags: List<Entry>, registerTag: (Tag) -> Unit, modifier: Modifier = Modifier) {
-    if(tags.isEmpty())
+fun BLELocalTags(entries: List<Entry>, registerTag: (Tag) -> Unit, modifier: Modifier = Modifier) {
+    if(entries.isEmpty())
     {
         Box(
             contentAlignment = Alignment.Center,
@@ -89,8 +95,8 @@ fun BLELocalTags(tags: List<Entry>, registerTag: (Tag) -> Unit, modifier: Modifi
     }
     else {
         LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
-            items(items = tags) { tag ->
-                BLETagDisplay(tag = tag, registerTag=registerTag,modifier = modifier)
+            items(items = entries) { entry ->
+                BLETagDisplay(entry = entry, registerTag=registerTag,modifier = modifier)
             }
         }
     }
@@ -98,13 +104,14 @@ fun BLELocalTags(tags: List<Entry>, registerTag: (Tag) -> Unit, modifier: Modifi
 
 @Composable
 private fun BLETagDisplay(
-    tag: Entry,
+    entry: Entry,
     registerTag : (Tag) -> Unit,
     modifier: Modifier = Modifier) {
     val showDialog = remember { mutableStateOf(false) }
+    val chosenTag = remember { mutableStateOf( Tag(0U,0U,UUID(0,0)))}
     if (showDialog.value) {
         RegisterTagDialog(
-            tag = tag.tag,
+            tag = chosenTag.value,
             showDialog = showDialog.value,
             onConfirm = registerTag,
             onDismiss = { showDialog.value = false })
@@ -118,10 +125,13 @@ private fun BLETagDisplay(
                 modifier = Modifier
                     .weight(1f)
             ) {
-                Text(text = tag.tagID.toString())
-                Text(text = "Last seen ${tag.distance} from ${tag.position} at ${tag.time}")
+                Text(text = "UUID: ${entry.tag.uuid} Major: ${entry.tag.major}, Minor: ${entry.tag.minor}")
+                Text(text = "Approx.: ${entry.distance}m")
             }
-            ElevatedButton(onClick = { showDialog.value = true }) {
+            ElevatedButton(onClick = {
+                chosenTag.value =entry.tag
+                showDialog.value = true
+            }) {
                 Text("Register")
             }
         }

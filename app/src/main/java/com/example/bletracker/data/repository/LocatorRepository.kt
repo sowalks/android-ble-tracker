@@ -1,5 +1,6 @@
 package com.example.bletracker.data.repository
 
+import android.util.Log
 import com.example.bletracker.data.source.network.LocatorApiService
 import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Entries
@@ -29,6 +30,7 @@ class NetworkLocatorRepository(
                 testID = locatorApiService.getDeviceID()
                 localDeviceIDRepository.set(testID)
             }
+        Log.d(TAG,"DeviceID  = $testID")
         return  testID
     }
 
@@ -42,5 +44,8 @@ class NetworkLocatorRepository(
 
     override suspend fun submitLog(entries: Entries): List<Int> {
         return locatorApiService.submitLog(entries).status
+    }
+    companion object{
+        val TAG = "LocatorRepo"
     }
 }

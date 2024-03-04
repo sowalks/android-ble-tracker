@@ -65,14 +65,13 @@ fun LocateScreen(
     locatorViewModel: LocateViewModel,
     modifier: Modifier = Modifier
 ) {
-
-    when (locatorViewModel.locatorUiState) {
+    when (val uistate= locatorViewModel.locatorUiState) {
         is LocatorUiState.Success-> ResultScreen(
             locatorViewModel.tags, setMode = {tagID -> locatorViewModel.setTagMode(tagID) }, modifier = modifier.fillMaxWidth()
         )
         is LocatorUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is LocatorUiState.Error -> {
-            ErrorScreen({ locatorViewModel.getOwnedTags() },"Try again", modifier = modifier.fillMaxSize())
+            ErrorScreen({ locatorViewModel.getOwnedTags() },"Try again: ${uistate.msg}", modifier = modifier.fillMaxSize())
         }
     }
 }
@@ -154,7 +153,7 @@ fun ErrorScreen(retryAction: () -> Unit, msg : String, modifier: Modifier = Modi
         )
         Text(text = msg, modifier = Modifier.padding(16.dp))
         Button(onClick = retryAction) {
-            Text(stringResource(R.string.retry))
+            Text("Retry")
         }
     }
 }

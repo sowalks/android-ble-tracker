@@ -37,28 +37,27 @@ class BeaconReferenceApplication : Application() {
                         runBlocking {
                             container.logRepository.consumeLog()
                         }
-
-                    val success =
-                        runBlocking {
-                            try {
-                                container.locatorRepository.submitLog(beacons)
-                            } catch (e: IOException) {
-                                Log.d(TAG, e.toString())
-                               listOf(-2)
-                            } catch (e: HttpException) {
-                                Log.d(TAG, e.message())
-                                listOf(-2)
+                    if(beacons.entries.isNotEmpty()) {
+                        val success =
+                            runBlocking {
+                                try {
+                                    container.locatorRepository.submitLog(beacons)
+                                } catch (e: IOException) {
+                                    Log.d(TAG, e.toString())
+                                    listOf(-2)
+                                } catch (e: HttpException) {
+                                    Log.d(TAG, e.message())
+                                    listOf(-2)
+                                }
                             }
+
+
+                        if (success.contains(-1)) {
+                            Log.d(TAG, "Error in submitting log of ${success.size} beacons")
+                        } else if (success.size == 1 && success[0] == -2) {
+                            Log.d(TAG, "Connection Error on ${beacons.entries.size}")
                         }
-
-
-                if (success.contains(-1)) {
-                    Log.d(TAG, "Error in submitting log of ${success.size} beacons")
-                }
-                else if(success.size ==  1 && success[0] == -2)
-                {
-                    Log.d(TAG, "Connection Error")
-                }
+                    }
                 Log.d(TAG, "I will log this line every $LOGGING_PERIOD forever")
                 Thread.sleep(LOGGING_PERIOD)
                 // FileOutputStream( "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/log=_10sec.csv",true ).writeCsv(beacons)

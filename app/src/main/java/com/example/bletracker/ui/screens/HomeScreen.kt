@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bletracker.data.ble.BeaconRangingSmoother
 import com.example.bletracker.data.repository.LocatorRepository
 import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Entries
@@ -60,16 +62,16 @@ fun ScreenTabLayout(regionViewModel:RegionViewModel,
 
     val tabs = listOf("Register Tags", "Locate Tags")
     val tabIndex = remember {
-        mutableStateOf(value = 0)
+        mutableIntStateOf(value = 0)
     }
     Column(modifier = modifier
         ) {
-        TabRow(selectedTabIndex = tabIndex.value, modifier = Modifier
+        TabRow(selectedTabIndex = tabIndex.intValue, modifier = Modifier
             .fillMaxWidth()) {
             tabs.forEachIndexed { index, title ->
                 Tab(
-                    selected = tabIndex.value == index,
-                    onClick = { tabIndex.value = index},
+                    selected = tabIndex.intValue == index,
+                    onClick = { tabIndex.intValue = index},
                     content = {
                         when (index) {
                             0 -> Text(title, style = MaterialTheme.typography.headlineSmall)
@@ -79,11 +81,13 @@ fun ScreenTabLayout(regionViewModel:RegionViewModel,
                 )
             }
         }
-        when (tabIndex.value) {
+
+        when (tabIndex.intValue) {
             0 -> RegisterScreen(registerTagViewModel = registerTagViewModel,
-                localTags = regionViewModel.rangedBeacons.observeAsState(initial = mutableListOf()),
+                localTags = regionViewModel.rangedBeacons.observeAsState(initial= mutableListOf()),
                 snackBarHostState = snackBarHostState)
-            1 -> LocateScreen(locatorViewModel = locatorViewModel)
+            1 -> { locatorViewModel.getOwnedTags()
+                LocateScreen(locatorViewModel = locatorViewModel)}
         }
     }
 }
