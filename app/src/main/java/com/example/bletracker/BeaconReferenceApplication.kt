@@ -58,8 +58,8 @@ class BeaconReferenceApplication : Application() {
                             Log.d(TAG, "Connection Error on ${beacons.entries.size}")
                         }
                     }
-                Log.d(TAG, "I will log this line every $LOGGING_PERIOD forever")
-                Thread.sleep(LOGGING_PERIOD)
+                Log.d(TAG, "I will log this line every ${container.loggingPeriod} forever")
+                Thread.sleep(container.loggingPeriod)
                 // FileOutputStream( "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/log=_10sec.csv",true ).writeCsv(beacons)
             }
 
@@ -70,7 +70,6 @@ class BeaconReferenceApplication : Application() {
 
     companion object {
         const val TAG = "BeaconReference"
-        const val  LOGGING_PERIOD = 10000L
     }
 
 }

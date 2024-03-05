@@ -11,12 +11,11 @@ import java.util.ArrayList
  *
  * Changed only to ensure no duplicate beacons + they are sorted so the list positions do not switch
  */
-class BeaconRangingSmoother {
+class BeaconRangingSmoother(private val smoothingWindowMillis: Long = 10000){
     private var beacons: ArrayList<Beacon> = ArrayList<Beacon>()
-    var smoothingWindowMillis: Long = 10000
-    var visibleBeacons: List<Beacon> = ArrayList<Beacon>()
+    val visibleBeacons: List<Beacon>
         get() {
-            var visible = ArrayList<Beacon>()
+            val visible = ArrayList<Beacon>()
             for (beacon in beacons) {
                 if (System.currentTimeMillis() - beacon.lastCycleDetectionTimestamp < smoothingWindowMillis  && !visible.contains(beacon)) {
                     visible.add(beacon)
@@ -33,6 +32,5 @@ class BeaconRangingSmoother {
     }
     companion object {
         val TAG = "BeaconRangingSmoother"
-        val shared = BeaconRangingSmoother()
     }
 }

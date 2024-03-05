@@ -30,10 +30,12 @@ data class Entries (
 
 
 @Serializable
-data class RegisterStatus(
+data class Status(
     var status : Int
 )
 @Serializable
 data class LogStatus(
     var status : List<Int>
 )
+
+

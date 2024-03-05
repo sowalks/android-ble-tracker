@@ -32,6 +32,7 @@ import java.util.UUID
 import com.example.bletracker.data.ble.toListEntry
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.bletracker.data.ble.BeaconRangingSmoother
+import com.example.bletracker.data.source.network.model.UpdateUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.altbeacon.beacon.Beacon
@@ -42,41 +43,24 @@ fun RegisterScreen(
     registerTagViewModel: RegisterTagViewModel,
     localTags: State<Collection<Beacon>>,
     modifier: Modifier = Modifier,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     snackBarHostState: SnackbarHostState
 ) {
     //Get state of tags, refresh when detected tags change
     val smoothTags =  registerTagViewModel.smoothBeacons(localTags.value)
-    val uiState = registerTagViewModel.registerUiState
-    when (uiState ) {
-        is RegisterUiState.Idle -> {}
-        is RegisterUiState.Success ->  {
-            LaunchedEffect(coroutineScope) {
-                snackBarHostState.showSnackbar(
-                    "Tag ${uiState.tagID} Registered"
-                )
-                registerTagViewModel.userNotified()
-            }
+    when (val uiState = registerTagViewModel.registerUiState) {
+        is UpdateUiState.Idle -> {}
+        is UpdateUiState.Success -> LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar("Tag ${uiState.status} Registered")
+            registerTagViewModel.userNotified()
         }
-        is RegisterUiState.Loading -> {
-            LaunchedEffect(coroutineScope) {
-                snackBarHostState.showSnackbar(
-                    "Registering...."
-                )
-                registerTagViewModel.userNotified()
-            }
+        is UpdateUiState.Loading ->LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar("  Registering....")
+            registerTagViewModel.userNotified()
         }
-        is RegisterUiState.Error -> {
-            LaunchedEffect(coroutineScope) {
-                snackBarHostState.showSnackbar(
-                    " ${uiState.msg}"
-                )
-               registerTagViewModel.userNotified()
-            }
-
-        }
+        is UpdateUiState.Error ->   LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar(" ${uiState.msg}")
+        registerTagViewModel.userNotified()
     }
-BLELocalTags(entries =smoothTags.toListEntry(), registerTag ={
+    }
+
+    BLELocalTags(entries =smoothTags.toListEntry(), registerTag ={
     registerTagViewModel.registerTag(it)
      },modifier=modifier)
 

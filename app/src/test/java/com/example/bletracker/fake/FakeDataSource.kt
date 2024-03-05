@@ -6,7 +6,7 @@ import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Entry
 import com.example.bletracker.data.source.network.model.LogStatus
 import com.example.bletracker.data.source.network.model.Position
-import com.example.bletracker.data.source.network.model.RegisterStatus
+import com.example.bletracker.data.source.network.model.Status
 import com.example.bletracker.data.source.network.model.Registrator
 import com.example.bletracker.data.source.network.model.Tag
 import kotlinx.datetime.LocalDateTime
@@ -57,9 +57,9 @@ object FakeDataSource {
         )
     )
     )
-    val  registerStatusSuccess = RegisterStatus(35)
-    val  registerStatusFail1 = RegisterStatus(-1)
-    val  registerStatusFail12= RegisterStatus(-2)
+    val  statusSuccess = Status(35)
+    val  statusFail1 = Status(-1)
+    val  statusFail12= Status(-2)
 
     val  logStatusSuccess = LogStatus(listOf(0,0,0))
     val  logStatusFail1 = LogStatus(listOf(0,-1,-1))

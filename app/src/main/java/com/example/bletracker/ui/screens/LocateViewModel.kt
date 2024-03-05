@@ -17,6 +17,7 @@ import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.bletracker.BeaconReferenceApplication
 import com.example.bletracker.data.source.network.model.DeviceID
+import com.example.bletracker.data.source.network.model.UpdateUiState
 import java.net.ConnectException
 
 
@@ -29,6 +30,9 @@ sealed interface   LocatorUiState {
 class LocateViewModel(private val locatorRepository: LocatorRepository) : ViewModel() {
     /** The mutable State that stores the status of the most recent request */
     var locatorUiState: LocatorUiState by mutableStateOf(LocatorUiState.Loading)
+        private set
+
+    var setModeState: UpdateUiState by mutableStateOf(UpdateUiState.Idle)
         private set
 
     /**
@@ -57,8 +61,23 @@ class LocateViewModel(private val locatorRepository: LocatorRepository) : ViewMo
         }
     }
 
-    fun setTagMode(tagID: Int) {
-//TODO HERE AND SERVER
+    fun setTagMode(tagID: Int,mode:Boolean) {
+        viewModelScope.launch {
+           setModeState = try {
+               UpdateUiState.Success(locatorRepository.setMode(tagID, mode = mode))
+            }
+            catch (e: IOException) {
+                Log.d(TAG, e.toString())
+                UpdateUiState.Error("Set Mode IO Error")
+            } catch (e: HttpException) {
+                Log.d(TAG, e.message())
+                UpdateUiState.Error("Set Mode Http Error")
+            }
+        }
+    }
+
+    fun userNotified(){
+        setModeState = UpdateUiState.Idle
     }
 
     companion object {

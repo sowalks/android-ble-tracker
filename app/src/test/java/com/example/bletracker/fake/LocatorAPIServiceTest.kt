@@ -73,7 +73,7 @@ fun  locatorApiService_verify_server_registrate() =
             .build()
         val retrofitTestService: LocatorApiService =   retrofit.create(LocatorApiService::class.java)
         val res =  retrofitTestService.registerTag(FakeDataSource.registrator)
-        assertEquals("Status Recieved should be ${FakeDataSource.registerStatusFail12}, is $res .",res,FakeDataSource.registerStatusFail12)
+        assertEquals("Status Recieved should be ${FakeDataSource.statusFail12}, is $res .",res,FakeDataSource.statusFail12)
 
     }
 }

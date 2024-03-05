@@ -29,6 +29,8 @@ interface AppContainer {
     val region : Region
     val bleHelper: BLEBeaconHelper
     val logRepository : LogRepository
+    val loggingPeriod : Long
+    val smoothingPeriod: Long
 }
 
 //only ever a single instance, so initialize in context
@@ -37,7 +39,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "de
 class DefaultAppContainer(context : Context) : AppContainer {
 
     private val baseURL =
-        "https://10.0.2.2:5000"
+        "https://192.168.30.64:5000"
 
     //dev client to not have to worry ab self certified certificate
     private val okhttpClientDev = OkHttpClient.Builder()
@@ -61,6 +63,18 @@ class DefaultAppContainer(context : Context) : AppContainer {
         DefaultDeviceIDRepository(context.dataStore)
     }
 
+    private  val betweenScansPeriod: Long = 0
+
+    private val scanPeriod : Long = 1100L
+
+    override val loggingPeriod: Long = 10000L
+
+    override val smoothingPeriod: Long = 10000L
+
+    override val bleHelper :BLEBeaconHelper by lazy {
+        BLEHelper(context, logRepository, region, scanPeriod = scanPeriod,smoothingPeriod=smoothingPeriod)
+    }
+
     override val logRepository : LogRepository by lazy{ BLELogRepository() }
 
     override val locatorRepository: LocatorRepository by lazy {
@@ -69,7 +83,4 @@ class DefaultAppContainer(context : Context) : AppContainer {
     // the region definition ensures we are looking for any possible iBeacon
     override val region : Region by lazy {Region("all-beacons", null, null, null)}
 
-    override val bleHelper :BLEBeaconHelper by lazy {
-        BLEHelper(context, logRepository, region)
-    }
 }

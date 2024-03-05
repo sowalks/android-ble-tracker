@@ -16,6 +16,6 @@ class NetworkLocatorRepositoryTest {
             assertEquals(FakeDataSource.deviceID, repository.getDeviceID())
             assertEquals(FakeDataSource.locatorEntries, repository.getLocations())
             assertEquals(FakeDataSource.logStatusSuccess.status, repository.submitLog(FakeDataSource.logEntries))
-            assertEquals(FakeDataSource.registerStatusSuccess.status, repository.registerTag(FakeDataSource.registrator.tag,FakeDataSource.registrator.mode))
+            assertEquals(FakeDataSource.statusSuccess.status, repository.registerTag(FakeDataSource.registrator.tag,FakeDataSource.registrator.mode))
     }
 }

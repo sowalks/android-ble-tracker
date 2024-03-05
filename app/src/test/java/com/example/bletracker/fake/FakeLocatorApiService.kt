@@ -4,7 +4,7 @@ import com.example.bletracker.data.source.network.LocatorApiService
 import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.LogStatus
-import com.example.bletracker.data.source.network.model.RegisterStatus
+import com.example.bletracker.data.source.network.model.Status
 import com.example.bletracker.data.source.network.model.Registrator
 
 
@@ -17,8 +17,8 @@ class FakeLocatorApiService : LocatorApiService {
         return FakeDataSource.locatorEntries
     }
 
-    override suspend fun registerTag(register: Registrator): RegisterStatus {
-        return FakeDataSource.registerStatusSuccess
+    override suspend fun registerTag(register: Registrator): Status {
+        return FakeDataSource.statusSuccess
     }
 
     override suspend fun submitLog(entries: Entries): LogStatus {

@@ -21,6 +21,6 @@ class FakeNetworkLocatorRepository(): LocatorRepository {
     }
 
     override suspend fun registerTag(tag: Tag, mode: Boolean): Int {
-        return FakeDataSource.registerStatusSuccess.status
+        return FakeDataSource.statusSuccess.status
     }
 }

@@ -21,17 +21,22 @@ interface BLEBeaconHelper{
     fun setupForegroundService()
 }
 
-class BLEHelper(private val context: Context, private val logRepository: LogRepository, private val region: Region) : BLEBeaconHelper {
+class BLEHelper(private val context: Context,
+                private val logRepository: LogRepository,
+                private val region: Region,
+                private val scanPeriod: Long = 1100L,
+                private val betweenScanPeriod: Long = 0,
+                private val smoothingPeriod: Long = 10000L) : BLEBeaconHelper {
 
     override fun setupBeaconScanning() {
         val beaconManager = BeaconManager.getInstanceForApplication(context)
         beaconManager.beaconParsers.clear()
 
-        val parser = BeaconParser().
-        setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24")
+        val parser = BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24")
         parser.setHardwareAssistManufacturerCodes(arrayOf(0x004c).toIntArray())
         beaconManager.beaconParsers.add(
-            parser)
+            parser
+        )
         // By default, the library will scan in the background every 5 minutes on Android 4-7,
         // which will be limited to scan jobs scheduled every ~15 minutes on Android 8+
         // If you want more frequent scanning (requires a foreground service on Android 8+),
@@ -42,23 +47,23 @@ class BLEHelper(private val context: Context, private val logRepository: LogRepo
         try {
             setupForegroundService()
             beaconManager.setEnableScheduledScanJobs(false)
-            beaconManager.backgroundBetweenScanPeriod = 0
-            beaconManager.backgroundScanPeriod = CYCLE_PERIOD
+            beaconManager.backgroundBetweenScanPeriod = betweenScanPeriod
+            beaconManager.backgroundScanPeriod = scanPeriod
 
-        }
-        catch (e: SecurityException) {
+        } catch (e: SecurityException) {
             // On Android TIRAMISU + this security exception will happen
             // if location permission has not been granted when we start
             // a foreground service.  In this case, wait to set this up
             // until after that permission is granted
-            Log.d(TAG, "Not setting up foreground service scanning until location permission granted by user")
+            Log.d(
+                TAG,
+                "Not setting up foreground service scanning until location permission granted by user"
+            )
             return
-        }
-        catch (e: RuntimeException)
-        {
+        } catch (e: RuntimeException) {
             //I refuse to solve this right now but excepting as everything else works
             //and error is caused in best practice lib
-            Log.d(TAG,"Foreground Runtime error")
+            Log.d(TAG, "Foreground Runtime error")
 
         }
 
@@ -70,13 +75,17 @@ class BLEHelper(private val context: Context, private val logRepository: LogRepo
         beaconManager.startMonitoring(region)
         beaconManager.startRangingBeacons(region)
         // These two lines set up a Live Data observer so this Activity can get beacon data from the Application class
-        val regionViewModel = BeaconManager.getInstanceForApplication(context).getRegionViewModel(region)
+        val regionViewModel =
+            BeaconManager.getInstanceForApplication(context).getRegionViewModel(region)
         // observer will be called each time a new list of beacons is ranged (typically ~1 second in the foreground)
-        regionViewModel.rangedBeacons.observeForever( centralRangingObserver)
+        regionViewModel.rangedBeacons.observeForever(centralRangingObserver)
 
     }
+
     private val notificationManager: NotificationManager =
-    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    private val beaconSmoother: BeaconRangingSmoother = BeaconRangingSmoother(smoothingPeriod)
 
     override fun setupForegroundService() {
         val builder = Notification.Builder(context, "BeaconReferenceApp")
@@ -87,35 +96,40 @@ class BLEHelper(private val context: Context, private val logRepository: LogRepo
             context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
         )
         builder.setContentIntent(pendingIntent)*/
-        val channel =  NotificationChannel("beacon-ref-notification-id",
-            "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT)
+        val channel = NotificationChannel(
+            "beacon-ref-notification-id",
+            "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT
+        )
         channel.description = "My Notification Channel Description"
         notificationManager.createNotificationChannel(channel)
         builder.setChannelId(channel.id)
         Log.d(TAG, "Calling enableForegroundServiceScanning")
-        BeaconManager.getInstanceForApplication(context).enableForegroundServiceScanning(builder.build(), 456)
+        BeaconManager.getInstanceForApplication(context)
+            .enableForegroundServiceScanning(builder.build(), 456)
         Log.d(TAG, "Back from  enableForegroundServiceScanning")
     }
 
-    private val centralRangingObserver = Observer<Collection<Beacon>> { beacons ->
-        val rangeAgeMillis = System.currentTimeMillis() - (beacons.firstOrNull()?.lastCycleDetectionTimestamp ?: 0)
-        if (rangeAgeMillis < CYCLE_PERIOD) {
-            Log.d(TAG, "Ranged: ${beacons.count()} beacons")
-            for (beacon: Beacon in beacons) {
-                Log.d(TAG, "$beacon about ${beacon.distance} meters away")
+    private val centralRangingObserver = Observer<Collection<Beacon>> {  beacons ->
+            val rangeAgeMillis =
+                System.currentTimeMillis() - (beacons.firstOrNull()?.lastCycleDetectionTimestamp
+                    ?: 0)
+            if (rangeAgeMillis < scanPeriod) {
+                Log.d(TAG, "Ranged: ${beacons.count()} beacons")
+                for (beacon: Beacon in beacons) {
+                    Log.d(TAG, "$beacon about ${beacon.distance} meters away")
+                }
+                //TODO check scope
+                runBlocking {
+                    //smooth before log
+                    logRepository.appendLog( beaconSmoother.add(beacons).visibleBeacons.toListEntry())
+                }
+            } else {
+                Log.d(TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
             }
-            runBlocking {
-                logRepository.appendLog(beacons.toListEntry())
-            }
-        }
-        else {
-            Log.d(TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
-        }
-    }
+}
 
     companion object {
         const val TAG = "BLEServiceHelper"
-        const val CYCLE_PERIOD = 1100L
     }
 
 }

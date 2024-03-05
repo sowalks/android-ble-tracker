@@ -44,7 +44,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,8 +56,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import com.example.bletracker.data.source.network.model.Position
 import com.example.bletracker.data.source.network.model.Tag
+import com.example.bletracker.data.source.network.model.UpdateUiState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 
@@ -63,23 +68,44 @@ import java.util.UUID
 @Composable
 fun LocateScreen(
     locatorViewModel: LocateViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    snackBarHostState: SnackbarHostState
 ) {
-    when (val uistate= locatorViewModel.locatorUiState) {
+   when(val mode = locatorViewModel.setModeState) {
+        is UpdateUiState.Idle -> {}
+        is UpdateUiState.Success -> LaunchedEffect(snackBarHostState) {
+            snackBarHostState.showSnackbar(
+                when (mode.status) {
+                    1 -> "Mode set to Tracking."
+                    0 -> "Mode set to Inhibitor."
+                    else -> "Error, Try Again."
+                }
+            )
+            locatorViewModel.userNotified()
+        }
+        is UpdateUiState.Loading -> LaunchedEffect(snackBarHostState) {
+            snackBarHostState.showSnackbar("Setting Mode... ")
+            locatorViewModel.userNotified()
+        }
+        is UpdateUiState.Error -> LaunchedEffect(snackBarHostState) {
+            snackBarHostState.showSnackbar("Error, Try Again,")
+            locatorViewModel.userNotified()
+        }
+    }
+
+    when (val uiState= locatorViewModel.locatorUiState) {
         is LocatorUiState.Success-> ResultScreen(
-            locatorViewModel.tags, setMode = {tagID -> locatorViewModel.setTagMode(tagID) }, modifier = modifier.fillMaxWidth()
+            locatorViewModel.tags, setMode = {tagID,mode-> locatorViewModel.setTagMode(tagID,mode) }, modifier = modifier.fillMaxWidth()
         )
         is LocatorUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is LocatorUiState.Error -> {
-            ErrorScreen({ locatorViewModel.getOwnedTags() },"Try again: ${uistate.msg}", modifier = modifier.fillMaxSize())
+            ErrorScreen({ locatorViewModel.getOwnedTags() },"Try again: ${uiState.msg}", modifier = modifier.fillMaxSize())
         }
     }
 }
-/**
- * ResultScreen displaying number of photos retrieved.
- */
+
 @Composable
-fun ResultScreen(tags: Entries, setMode: (Int)->Unit,modifier: Modifier = Modifier) {
+fun ResultScreen(tags: Entries, setMode: (Int,Boolean)->Unit,modifier: Modifier = Modifier) {
     if(tags.entries.isEmpty())
     {
         Box(
@@ -101,7 +127,7 @@ fun ResultScreen(tags: Entries, setMode: (Int)->Unit,modifier: Modifier = Modifi
 
 @Composable
 private fun OwnedTagDisplay(tag: Entry,
-                            setMode: (Int)->Unit,
+                            setMode: (Int,Boolean)->Unit,
                        modifier: Modifier = Modifier){
     var showDialog = remember { mutableStateOf(false) }
     //set mode when button clicked
@@ -122,7 +148,6 @@ private fun OwnedTagDisplay(tag: Entry,
             ) {
                 Text(text = tag.tagID.toString())
                 Text(text = "Last seen ${tag.distance} from ${tag.position} at ${tag.time}")
-                //TODO ADD MODE
             }
             ElevatedButton(onClick = {showDialog.value = true}){
                 Text("Set Mode")
@@ -161,7 +186,7 @@ fun ErrorScreen(retryAction: () -> Unit, msg : String, modifier: Modifier = Modi
 
 
 @Composable
-fun SetModeDialog(tagID: Int, showDialog: Boolean, onConfirm: (Int)->Unit,onDismiss : () -> Unit){
+fun SetModeDialog(tagID: Int, showDialog: Boolean, onConfirm: (Int,Boolean)->Unit,onDismiss : () -> Unit){
     if(showDialog) {
         var modeState by remember { mutableStateOf(true) }
         AlertDialog(
@@ -171,17 +196,17 @@ fun SetModeDialog(tagID: Int, showDialog: Boolean, onConfirm: (Int)->Unit,onDism
                 {
                     Row {
                         RadioButton(selected = modeState, onClick = { modeState = true })
-                        Text("Inhibitor Mode")
+                        Text("Tracker Mode")
                     }
                     Row {
                         RadioButton(selected = !modeState, onClick = { modeState = false })
-                        Text("Regular Mode")
+                        Text("Inhibitor Mode")
                     }
                 }
             },
             onDismissRequest = { onDismiss() },
             confirmButton = {Button(onClick ={
-                    onConfirm(tagID)
+                    onConfirm(tagID,modeState)
                     onDismiss()
             }){Text("SET MODE")}},
             dismissButton = {Button(onClick = onDismiss){Text("CANCEL")} }
@@ -202,11 +227,11 @@ fun ResultScreenPreview() {
             distance =  3.0,
             position = Position(0.456,0.3456)
         )
-    )),setMode ={},modifier = Modifier.fillMaxWidth())}
+    )),setMode ={_,_->},modifier = Modifier.fillMaxWidth())}
 
 @Preview(showBackground = true)
 @Composable
 fun DialogPreview() {
-    SetModeDialog(tagID = 6, onConfirm = {}, showDialog = true) {
+    SetModeDialog(tagID = 6, onConfirm = {_,_ ->}, showDialog = true) {
     }
 }

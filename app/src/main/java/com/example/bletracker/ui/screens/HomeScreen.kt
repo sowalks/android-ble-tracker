@@ -20,35 +20,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.bletracker.data.ble.BeaconRangingSmoother
 import com.example.bletracker.data.repository.LocatorRepository
 import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Entry
 import com.example.bletracker.data.source.network.model.LogStatus
 import com.example.bletracker.data.source.network.model.Position
-import com.example.bletracker.data.source.network.model.RegisterStatus
+import com.example.bletracker.data.source.network.model.Status
 import com.example.bletracker.data.source.network.model.Registrator
 import com.example.bletracker.data.source.network.model.Tag
 import kotlinx.datetime.LocalDateTime
-import org.altbeacon.beacon.AltBeacon
-import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.RegionViewModel
 import java.util.UUID
 
@@ -81,13 +73,17 @@ fun ScreenTabLayout(regionViewModel:RegionViewModel,
                 )
             }
         }
-
+        //Reset snackbar notifications on switch
         when (tabIndex.intValue) {
-            0 -> RegisterScreen(registerTagViewModel = registerTagViewModel,
+            0 -> {
+                locatorViewModel.userNotified()
+                RegisterScreen(registerTagViewModel = registerTagViewModel,
                 localTags = regionViewModel.rangedBeacons.observeAsState(initial= mutableListOf()),
-                snackBarHostState = snackBarHostState)
-            1 -> { locatorViewModel.getOwnedTags()
-                LocateScreen(locatorViewModel = locatorViewModel)}
+                snackBarHostState = snackBarHostState)}
+            1 -> {
+                registerTagViewModel.userNotified()
+                locatorViewModel.getOwnedTags()
+                LocateScreen(locatorViewModel = locatorViewModel,snackBarHostState=snackBarHostState)}
         }
     }
 }
@@ -115,9 +111,17 @@ class FakeNetworkLocatorRepository(): LocatorRepository {
     }
 
     override suspend fun registerTag(tag: Tag, mode: Boolean): Int {
-        return FakeDataSource.registerStatusSuccess.status
+        return FakeDataSource.statusSuccess.status
+    }
+    override suspend fun setMode(tagID: Int, mode: Boolean): Int {
+        return if(mode){
+            1
+        } else {
+            0
+        }
     }
 }
+
 
 
 object FakeDataSource {
@@ -165,9 +169,9 @@ object FakeDataSource {
         )
     )
     )
-    val  registerStatusSuccess = RegisterStatus(35)
-    val  registerStatusFail1 = RegisterStatus(-1)
-    val  registerStatusFail12= RegisterStatus(-2)
+    val  statusSuccess = Status(35)
+    val  statusFail1 = Status(-1)
+    val  statusFail12= Status(-2)
 
     val  logStatusSuccess = LogStatus(listOf(0,0,0))
     val  logStatusFail1 = LogStatus(listOf(0,-1,-1))

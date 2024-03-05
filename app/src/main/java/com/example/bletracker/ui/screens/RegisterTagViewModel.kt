@@ -18,59 +18,55 @@ import com.example.bletracker.data.ble.BeaconRangingSmoother
 import com.example.bletracker.data.repository.LocatorRepository
 import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Tag
+import com.example.bletracker.data.source.network.model.UpdateUiState
 import kotlinx.coroutines.launch
 import org.altbeacon.beacon.Beacon
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed interface  RegisterUiState {
-        data class Success(val tagID : Int) : RegisterUiState
-        data class Error(val msg: String) : RegisterUiState
-        object Idle : RegisterUiState
-        object Loading: RegisterUiState
-}
 
 
-class RegisterTagViewModel(val locatorRepository: LocatorRepository) : ViewModel(){
+
+class RegisterTagViewModel(val locatorRepository: LocatorRepository,private val smoothingPeriod: Long = 10000) : ViewModel(){
 
 // uiState is used to update screen, but private set to only be modified here
-var registerUiState: RegisterUiState by mutableStateOf(RegisterUiState.Idle)
+var registerUiState: UpdateUiState by mutableStateOf(UpdateUiState.Idle)
         private set
-
+private val beaconSmoother :  BeaconRangingSmoother =  BeaconRangingSmoother(smoothingPeriod)
 
 fun registerTag(tag:Tag) {
         viewModelScope.launch{
-                registerUiState = RegisterUiState.Loading
+                registerUiState = UpdateUiState.Loading
                 Log.d(TAG, " Register Loading")
                 registerUiState = try {
                         val status = locatorRepository.registerTag(tag=tag,mode=true)
                         when{
                                 status == -2 -> { Log.d(TAG, "Already Registered")
-                                        RegisterUiState.Error("Register Failed")}
+                                        UpdateUiState.Error("Register Failed")}
                                 status == -1 ->   { Log.d(TAG, "Server failed Register")
-                                        RegisterUiState.Error("Register Failed, Try again.")}
+                                        UpdateUiState.Error("Register Failed, Try again.")}
                                 else ->  { Log.d(TAG, "Success")
-                                        RegisterUiState.Success(status)}
+                                        UpdateUiState.Success(status)}
 
                         }
                 }
                 catch(e : IOException){
                         Log.d(TAG, " Register IO Error")
-                        RegisterUiState.Error(e.toString())
+                        UpdateUiState.Error(e.toString())
                 }
                 catch(e : HttpException){
                         Log.d(TAG, " Register HTTP Error")
-                        RegisterUiState.Error(e.message())
+                        UpdateUiState.Error(e.message())
                 }
         }
 
 }
         fun userNotified(){
-                registerUiState = RegisterUiState.Idle
+                registerUiState = UpdateUiState.Idle
         }
         fun smoothBeacons(beacons:Collection<Beacon>) : Collection<Beacon>
         {
-                return BeaconRangingSmoother.shared.add(beacons).visibleBeacons
+                return beaconSmoother.add(beacons).visibleBeacons
         }
 companion object{
         val TAG = "RegisterViewModel"
@@ -78,7 +74,8 @@ companion object{
                 initializer {
                         val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)
                         val locatorRepository = application.container.locatorRepository
-                        RegisterTagViewModel(locatorRepository = locatorRepository)
+                        val smoothingPeriod = application.container.smoothingPeriod
+                        RegisterTagViewModel(locatorRepository = locatorRepository,smoothingPeriod=smoothingPeriod)
                 }
         }
 }
