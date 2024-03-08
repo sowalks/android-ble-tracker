@@ -7,12 +7,9 @@ import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Registrator
 import com.example.bletracker.data.source.network.model.SetModeBody
 import com.example.bletracker.data.source.network.model.Tag
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 
-interface LocatorRepository {
+interface NetworkRepository {
     suspend fun getLocations() : Entries
     suspend fun submitLog(entries : Entries) : List<Int>
     suspend fun registerTag(tag : Tag,mode:Boolean) : Int
@@ -22,7 +19,7 @@ interface LocatorRepository {
 class NetworkLocatorRepository(
     private val locatorApiService: LocatorApiService,
     private val localDeviceIDRepository : LocalDeviceIDRepository
-): LocatorRepository {
+): NetworkRepository {
 
 
     private suspend fun getDeviceID(): DeviceID {

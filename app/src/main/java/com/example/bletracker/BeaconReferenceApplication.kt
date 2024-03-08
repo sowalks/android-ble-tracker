@@ -1,23 +1,11 @@
 package com.example.bletracker
 
 import android.app.Application
-
 import android.util.Log
 import com.example.bletracker.data.AppContainer
 import com.example.bletracker.data.DefaultAppContainer
-import com.example.bletracker.data.ble.BLEHelper
-import com.example.bletracker.data.repository.BLELogRepository
-import com.example.bletracker.data.repository.LocatorRepository
-import com.example.bletracker.data.repository.LogRepository
-import com.example.bletracker.data.repository.NetworkLocatorRepository
-import com.example.bletracker.ui.screens.LocateViewModel
-import com.example.bletracker.ui.screens.LocatorUiState
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.altbeacon.beacon.Region
 import retrofit2.HttpException
-import java.io.FileOutputStream
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -31,38 +19,33 @@ class BeaconReferenceApplication : Application() {
         container = DefaultAppContainer(applicationContext)
         //Separate thread required to execute periodic requests
         // more regularly than ~15 minutes w/ Android killing it
-        executor.execute(Runnable{
+        //runblocking as we want this to be in order
+        executor.execute(Runnable{ runBlocking {
             while (true) {
-                    val beacons =
-                        runBlocking {
-                            container.logRepository.consumeLog()
+                val beacons = container.logRepository.consumeLog()
+                if (beacons.entries.isNotEmpty()) {
+                    val success =
+                        try {
+                            container.networkLocatorRepository.submitLog(beacons)
+                        } catch (e: IOException) {
+                            Log.d(TAG, e.toString())
+                            listOf(-2)
+                        } catch (e: HttpException) {
+                            Log.d(TAG, e.message())
+                            listOf(-2)
                         }
-                    if(beacons.entries.isNotEmpty()) {
-                        val success =
-                            runBlocking {
-                                try {
-                                    container.locatorRepository.submitLog(beacons)
-                                } catch (e: IOException) {
-                                    Log.d(TAG, e.toString())
-                                    listOf(-2)
-                                } catch (e: HttpException) {
-                                    Log.d(TAG, e.message())
-                                    listOf(-2)
-                                }
-                            }
-
-
-                        if (success.contains(-1)) {
-                            Log.d(TAG, "Error in submitting log of ${success.size} beacons")
-                        } else if (success.size == 1 && success[0] == -2) {
-                            Log.d(TAG, "Connection Error on ${beacons.entries.size}")
-                        }
+                    if (success.contains(-1)) {
+                        Log.d(TAG, "Error in submitting log of ${success.size} beacons")
+                    } else if (success.size == 1 && success[0] == -2) {
+                        Log.d(TAG, "Connection Error on ${beacons.entries.size}")
                     }
+                }
                 Log.d(TAG, "I will log this line every ${container.loggingPeriod} forever")
+                container.locationRepository.updateRecentLocation()
                 Thread.sleep(container.loggingPeriod)
                 // FileOutputStream( "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/log=_10sec.csv",true ).writeCsv(beacons)
             }
-
+            }
         })
 
         container.bleHelper.setupBeaconScanning()

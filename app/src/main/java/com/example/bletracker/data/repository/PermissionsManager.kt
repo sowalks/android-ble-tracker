@@ -1,4 +1,4 @@
-package com.example.bletracker.data
+package com.example.bletracker.data.repository
 /*
  * Copyright (C) 2022 The Android Open Source Project
  *
@@ -45,7 +45,7 @@ data class State(
         get() = hasAccessGroups.all{it}
 }
 
-class AppPermissionManager(private val context: Context) : PermissionManager{
+class AppPermissionManager(private val context: Context) : PermissionManager {
 
     override val permissionGroups: Collection<PermissionGroup> = PermissionGroupsNeeded()
 

@@ -102,7 +102,10 @@ dependencies {
     implementation ("androidx.test:runner:1.5.2")
     implementation ("androidx.test:rules:1.5.0")
     //Observe State of live ble data
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.3")
+    //Location
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.compose.ui:ui-tooling")

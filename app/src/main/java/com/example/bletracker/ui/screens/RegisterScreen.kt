@@ -31,6 +31,7 @@ import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 import com.example.bletracker.data.ble.toListEntry
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.viewModelScope
 import com.example.bletracker.data.ble.BeaconRangingSmoother
 import com.example.bletracker.data.source.network.model.UpdateUiState
 import kotlinx.coroutines.CoroutineScope
@@ -49,14 +50,11 @@ fun RegisterScreen(
     val smoothTags =  registerTagViewModel.smoothBeacons(localTags.value)
     when (val uiState = registerTagViewModel.registerUiState) {
         is UpdateUiState.Idle -> {}
-        is UpdateUiState.Success -> LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar("Tag ${uiState.status} Registered")
-            registerTagViewModel.userNotified()
-        }
+        is UpdateUiState.Success ->  { LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar("Tag ${uiState.status} Registered")
+        }}
         is UpdateUiState.Loading ->LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar("  Registering....")
-            registerTagViewModel.userNotified()
         }
-        is UpdateUiState.Error ->   LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar(" ${uiState.msg}")
-        registerTagViewModel.userNotified()
+        is UpdateUiState.Error ->   LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar(" Error: ${uiState.msg}")
     }
     }
 

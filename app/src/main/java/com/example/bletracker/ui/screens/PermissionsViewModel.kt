@@ -1,9 +1,5 @@
 package com.example.bletracker.ui.screens
 
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-
 
 /*
  * Copyright (C) 2022 The Android Open Source Project
@@ -23,7 +19,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 
 import android.content.Intent
 import androidx.lifecycle.ViewModel
-import com.example.bletracker.data.PermissionManager
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.bletracker.data.repository.PermissionManager
 
 class PermissionViewModel(val permissions: PermissionManager) : ViewModel() {
 

@@ -31,14 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.bletracker.data.repository.LocatorRepository
+import com.example.bletracker.data.repository.NetworkRepository
 import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Entry
 import com.example.bletracker.data.source.network.model.LogStatus
 import com.example.bletracker.data.source.network.model.Position
-import com.example.bletracker.data.source.network.model.Status
 import com.example.bletracker.data.source.network.model.Registrator
+import com.example.bletracker.data.source.network.model.Status
 import com.example.bletracker.data.source.network.model.Tag
 import kotlinx.datetime.LocalDateTime
 import org.altbeacon.beacon.RegionViewModel
@@ -91,17 +91,16 @@ fun ScreenTabLayout(regionViewModel:RegionViewModel,
 @Preview(showBackground = true)
 @Composable
 fun AppPreview(){
-    val regionViewModel =  RegionViewModel()
     ScreenTabLayout(
         regionViewModel = RegionViewModel(),
         snackBarHostState = SnackbarHostState(),
-        locatorViewModel = LocateViewModel(FakeNetworkLocatorRepository()),
-        registerTagViewModel = RegisterTagViewModel(FakeNetworkLocatorRepository()),
+        locatorViewModel = LocateViewModel(FakeNetworkRepository()),
+        registerTagViewModel = RegisterTagViewModel(FakeNetworkRepository()),
 
         )
 }
 
-class FakeNetworkLocatorRepository(): LocatorRepository {
+class FakeNetworkRepository(): NetworkRepository {
     override suspend fun getLocations(): Entries {
         return FakeDataSource.locatorEntries
     }

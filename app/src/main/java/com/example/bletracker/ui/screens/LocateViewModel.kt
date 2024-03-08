@@ -1,24 +1,22 @@
 package com.example.bletracker.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bletracker.data.repository.LocatorRepository
+import com.example.bletracker.BeaconReferenceApplication
+import com.example.bletracker.data.repository.NetworkRepository
 import com.example.bletracker.data.source.network.model.Entries
+import com.example.bletracker.data.source.network.model.UpdateUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import android.util.Log
 import java.io.IOException
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import com.example.bletracker.BeaconReferenceApplication
-import com.example.bletracker.data.source.network.model.DeviceID
-import com.example.bletracker.data.source.network.model.UpdateUiState
-import java.net.ConnectException
 
 
 sealed interface   LocatorUiState {
@@ -27,7 +25,7 @@ sealed interface   LocatorUiState {
     object Loading : LocatorUiState
 }
 
-class LocateViewModel(private val locatorRepository: LocatorRepository) : ViewModel() {
+class LocateViewModel(private val locatorRepository: NetworkRepository) : ViewModel() {
     /** The mutable State that stores the status of the most recent request */
     var locatorUiState: LocatorUiState by mutableStateOf(LocatorUiState.Loading)
         private set
@@ -85,7 +83,7 @@ class LocateViewModel(private val locatorRepository: LocatorRepository) : ViewMo
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)
-                val locatorRepository = application.container.locatorRepository
+                val locatorRepository = application.container.networkLocatorRepository
                 LocateViewModel(locatorRepository = locatorRepository)
             }
         }

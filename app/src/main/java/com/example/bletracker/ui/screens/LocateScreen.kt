@@ -81,15 +81,12 @@ fun LocateScreen(
                     else -> "Error, Try Again."
                 }
             )
-            locatorViewModel.userNotified()
         }
         is UpdateUiState.Loading -> LaunchedEffect(snackBarHostState) {
             snackBarHostState.showSnackbar("Setting Mode... ")
-            locatorViewModel.userNotified()
         }
         is UpdateUiState.Error -> LaunchedEffect(snackBarHostState) {
             snackBarHostState.showSnackbar("Error, Try Again,")
-            locatorViewModel.userNotified()
         }
     }
 

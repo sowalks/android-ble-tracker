@@ -9,6 +9,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.Observer
 import com.example.bletracker.R
+import com.example.bletracker.data.repository.LocationRepository
 import com.example.bletracker.data.repository.LogRepository
 import kotlinx.coroutines.runBlocking
 import org.altbeacon.beacon.Beacon
@@ -23,10 +24,11 @@ interface BLEBeaconHelper{
 
 class BLEHelper(private val context: Context,
                 private val logRepository: LogRepository,
+                private val locationRepository: LocationRepository,
                 private val region: Region,
                 private val scanPeriod: Long = 1100L,
                 private val betweenScanPeriod: Long = 0,
-                private val smoothingPeriod: Long = 10000L) : BLEBeaconHelper {
+                smoothingPeriod: Long = 10000L) : BLEBeaconHelper {
 
     override fun setupBeaconScanning() {
         val beaconManager = BeaconManager.getInstanceForApplication(context)
@@ -85,7 +87,7 @@ class BLEHelper(private val context: Context,
     private val notificationManager: NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    private val beaconSmoother: BeaconRangingSmoother = BeaconRangingSmoother(smoothingPeriod)
+   // if need to smooth logs private val beaconSmoother: BeaconRangingSmoother = BeaconRangingSmoother(smoothingPeriod)
 
     override fun setupForegroundService() {
         val builder = Notification.Builder(context, "BeaconReferenceApp")
@@ -118,10 +120,8 @@ class BLEHelper(private val context: Context,
                 for (beacon: Beacon in beacons) {
                     Log.d(TAG, "$beacon about ${beacon.distance} meters away")
                 }
-                //TODO check scope
                 runBlocking {
-                    //smooth before log
-                    logRepository.appendLog( beaconSmoother.add(beacons).visibleBeacons.toListEntry())
+                    logRepository.appendLog(beacons.toListEntry().map{locationRepository.addPosition(it)})
                 }
             } else {
                 Log.d(TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
@@ -133,3 +133,4 @@ class BLEHelper(private val context: Context,
     }
 
 }
+

@@ -4,7 +4,6 @@ package com.example.bletracker.ui.screens
 
 import android.util.Log
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -15,8 +14,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bletracker.BeaconReferenceApplication
 import com.example.bletracker.data.ble.BeaconRangingSmoother
-import com.example.bletracker.data.repository.LocatorRepository
-import com.example.bletracker.data.source.network.model.DeviceID
+import com.example.bletracker.data.repository.NetworkRepository
 import com.example.bletracker.data.source.network.model.Tag
 import com.example.bletracker.data.source.network.model.UpdateUiState
 import kotlinx.coroutines.launch
@@ -27,7 +25,7 @@ import java.io.IOException
 
 
 
-class RegisterTagViewModel(val locatorRepository: LocatorRepository,private val smoothingPeriod: Long = 10000) : ViewModel(){
+class RegisterTagViewModel(val locatorRepository:NetworkRepository,private val smoothingPeriod: Long = 10000) : ViewModel(){
 
 // uiState is used to update screen, but private set to only be modified here
 var registerUiState: UpdateUiState by mutableStateOf(UpdateUiState.Idle)
@@ -73,7 +71,7 @@ companion object{
         val Factory: ViewModelProvider.Factory = viewModelFactory {
                 initializer {
                         val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)
-                        val locatorRepository = application.container.locatorRepository
+                        val locatorRepository = application.container.networkLocatorRepository
                         val smoothingPeriod = application.container.smoothingPeriod
                         RegisterTagViewModel(locatorRepository = locatorRepository,smoothingPeriod=smoothingPeriod)
                 }

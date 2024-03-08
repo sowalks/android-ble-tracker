@@ -6,31 +6,36 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.bletracker.data.ble.BLEBeaconHelper
 import com.example.bletracker.data.ble.BLEHelper
+import com.example.bletracker.data.repository.AppPermissionManager
 import com.example.bletracker.data.repository.BLELogRepository
 import com.example.bletracker.data.repository.DefaultDeviceIDRepository
 import com.example.bletracker.data.repository.LocalDeviceIDRepository
-import com.example.bletracker.data.repository.LocatorRepository
+import com.example.bletracker.data.repository.LocationFusedRepository
+import com.example.bletracker.data.repository.LocationRepository
 import com.example.bletracker.data.repository.LogRepository
 import com.example.bletracker.data.repository.NetworkLocatorRepository
-import retrofit2.Retrofit
+import com.example.bletracker.data.repository.PermissionManager
 import com.example.bletracker.data.source.network.LocatorApiService
+import com.google.android.gms.location.LocationServices
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import org.altbeacon.beacon.Region
+import retrofit2.Retrofit
 import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.SSLSession
 
 
 
 interface AppContainer {
-    val locatorRepository : LocatorRepository
+    val networkLocatorRepository : NetworkLocatorRepository
     val region : Region
     val bleHelper: BLEBeaconHelper
     val logRepository : LogRepository
     val loggingPeriod : Long
     val smoothingPeriod: Long
+    val locationRepository: LocationRepository
+    val permissionManager: PermissionManager
 }
 
 //only ever a single instance, so initialize in context
@@ -39,7 +44,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "de
 class DefaultAppContainer(context : Context) : AppContainer {
 
     private val baseURL =
-        "https://192.168.30.64:5000"
+        "https://10.10.13.138:5000"
 
     //dev client to not have to worry ab self certified certificate
     private val okhttpClientDev = OkHttpClient.Builder()
@@ -63,6 +68,20 @@ class DefaultAppContainer(context : Context) : AppContainer {
         DefaultDeviceIDRepository(context.dataStore)
     }
 
+    override val permissionManager: AppPermissionManager by lazy{
+        AppPermissionManager(context=context)
+    }
+
+
+    private val  locationClient by lazy{  LocationServices.getFusedLocationProviderClient(context)}
+
+
+
+    override val locationRepository: LocationRepository by lazy {
+        LocationFusedRepository(locationClient,permissionManager)
+    }
+
+
     private  val betweenScansPeriod: Long = 0
 
     private val scanPeriod : Long = 1100L
@@ -72,12 +91,12 @@ class DefaultAppContainer(context : Context) : AppContainer {
     override val smoothingPeriod: Long = 10000L
 
     override val bleHelper :BLEBeaconHelper by lazy {
-        BLEHelper(context, logRepository, region, scanPeriod = scanPeriod,smoothingPeriod=smoothingPeriod)
+        BLEHelper(context, logRepository, locationRepository, region, scanPeriod = scanPeriod,betweenScanPeriod=betweenScansPeriod,smoothingPeriod=smoothingPeriod)
     }
 
     override val logRepository : LogRepository by lazy{ BLELogRepository() }
 
-    override val locatorRepository: LocatorRepository by lazy {
+    override val networkLocatorRepository: NetworkLocatorRepository by lazy {
         NetworkLocatorRepository(retrofitService,deviceIDRepository)
     }
     // the region definition ensures we are looking for any possible iBeacon
