@@ -44,7 +44,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "de
 class DefaultAppContainer(context : Context) : AppContainer {
 
     private val baseURL =
-        "https://10.10.13.138:5000"
+        "https://192.168.31.217:5000"
 
     //dev client to not have to worry ab self certified certificate
     private val okhttpClientDev = OkHttpClient.Builder()

@@ -11,31 +11,30 @@ import kotlinx.coroutines.tasks.await
 
 interface LocationRepository {
     suspend fun addPosition(entry: Entry) : Entry
-    suspend fun updateRecentLocation(): Position
+    suspend fun updateRecentLocation()
 }
 class LocationFusedRepository(private val locationClient: FusedLocationProviderClient,private val permissionManager: AppPermissionManager) : LocationRepository{
-    @SuppressLint("MissingPermission")
+    private lateinit var recentLocation : Position
+
     override suspend fun addPosition(entry: Entry): Entry {
         if(permissionManager.hasAllPermissions) {
-            val result = locationClient.lastLocation.await()
-            if (result == null) {
-                Log.d(TAG,"No recent location")
-                entry.position = updateRecentLocation()
+            if (recentLocation == null) {
+                Log.d(TAG, "No recent location")
+                entry.position = recentLocation
             }
-            entry.position = Position(result.longitude, result.latitude)
-            Log.d(TAG,"Position set to ${result.latitude},${result.longitude}")
+            entry.position = Position(recentLocation.longitude, recentLocation.latitude)
+            Log.d(TAG, "Position set to ${recentLocation.latitude},${recentLocation.longitude}")
+        }
+        else {
+            entry.position = Position(-1.0, -1.0)
+            Log.d(TAG, "Permissions not Granted")
+        }
             return entry
         }
-        else{
-            entry.position = Position(-1.0,-1.0)
-            Log.d(TAG,"Permissions not Granted")
-            return entry
-        }
-    }
 
 
     @SuppressLint("MissingPermission")
-    override suspend fun updateRecentLocation() : Position {
+    override suspend fun updateRecentLocation() {
         //To get more accurate or fresher device location use this method
         if(permissionManager.hasAllPermissions){
         val priority = Priority.PRIORITY_HIGH_ACCURACY
@@ -46,14 +45,16 @@ class LocationFusedRepository(private val locationClient: FusedLocationProviderC
 
         result?.let { fetchedLocation ->
             Log.d(TAG,"Location updated")
-            return Position(
-                fetchedLocation.latitude,
-                fetchedLocation.longitude
+            recentLocation = Position(
+                fetchedLocation.longitude,
+                fetchedLocation.latitude
+
             )
+            return
         }
         }
         Log.d(TAG,"Update  Location Error")
-        return Position(-1.0,-1.0)
+        recentLocation = Position(-1.0,-1.0)
     }
 
     companion object{
