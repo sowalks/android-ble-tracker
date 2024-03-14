@@ -23,6 +23,7 @@ class BeaconReferenceApplication : Application() {
         executor.execute {
             runBlocking {
                 while (true) {
+                    container.locationRepository.updateRecentLocation()
                     val beacons = container.logRepository.consumeLog()
                     if (beacons.entries.isNotEmpty()) {
                         val success =
@@ -42,7 +43,6 @@ class BeaconReferenceApplication : Application() {
                         }
                     }
                     Log.d(TAG, "I will log this line every ${container.loggingPeriod} forever")
-                    container.locationRepository.updateRecentLocation()
                     Thread.sleep(container.loggingPeriod)
                     // FileOutputStream( "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/log=_10sec.csv",true ).writeCsv(beacons)
                 }

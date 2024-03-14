@@ -15,6 +15,7 @@
  */
 package com.example.bletracker.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,6 +54,7 @@ import com.example.bletracker.data.source.network.model.Entry
 import com.example.bletracker.data.source.network.model.Position
 import com.example.bletracker.data.source.network.model.Tag
 import com.example.bletracker.data.source.network.model.UpdateUiState
+import com.example.bletracker.ui.screens.LocateViewModel.Companion.TAG
 import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 
@@ -64,20 +66,21 @@ fun LocateScreen(
     snackBarHostState: SnackbarHostState
 ) {
    when(val mode = locatorViewModel.setModeState) {
-        is UpdateUiState.Idle -> {}
-        is UpdateUiState.Success -> LaunchedEffect(snackBarHostState) {
+        is UpdateUiState.Idle -> {
+            Log.d(TAG,"no change - idle")}
+        is UpdateUiState.Success -> LaunchedEffect(mode) {
             snackBarHostState.showSnackbar(
                 when (mode.status) {
-                    1 -> "Mode set to Tracking."
                     0 -> "Mode set to Inhibitor."
+                    1 -> "Mode set to Tracking."
                     else -> "Error, Try Again."
                 }
             )
         }
-        is UpdateUiState.Loading -> LaunchedEffect(snackBarHostState) {
+        is UpdateUiState.Loading -> LaunchedEffect(mode) {
             snackBarHostState.showSnackbar("Setting Mode... ")
         }
-        is UpdateUiState.Error -> LaunchedEffect(snackBarHostState) {
+        is UpdateUiState.Error -> LaunchedEffect(mode) {
             snackBarHostState.showSnackbar("Error, Try Again,")
         }
     }
@@ -118,7 +121,7 @@ fun ResultScreen(tags: Entries, setMode: (Int,Boolean)->Unit,modifier: Modifier 
 private fun OwnedTagDisplay(tag: Entry,
                             setMode: (Int,Boolean)->Unit,
                        modifier: Modifier = Modifier){
-    var showDialog = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
     //set mode when button clicked
     if (showDialog.value){
         SetModeDialog(
@@ -136,7 +139,7 @@ private fun OwnedTagDisplay(tag: Entry,
                     .weight(1f)
             ) {
                 Text(text = tag.tagID.toString())
-                Text(text = "Last seen ${tag.distance} from ${tag.position} at ${tag.time}")
+                Text(text = "Last seen %.4f from (${tag.position.latitude},${tag.position.longitude}) at ${tag.time}".format(tag.distance))
             }
             ElevatedButton(onClick = {showDialog.value = true}){
                 Text("Set Mode")

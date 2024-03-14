@@ -44,11 +44,11 @@ fun RegisterScreen(
     val smoothTags =  registerTagViewModel.smoothBeacons(localTags.value)
     when (val uiState = registerTagViewModel.registerUiState) {
         is UpdateUiState.Idle -> {}
-        is UpdateUiState.Success ->  { LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar("Tag ${uiState.status} Registered")
-        }}
-        is UpdateUiState.Loading ->LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar("  Registering....")
+        is UpdateUiState.Success -> LaunchedEffect(uiState){  snackBarHostState.showSnackbar("Tag ${uiState.status} Registered")
         }
-        is UpdateUiState.Error ->   LaunchedEffect(snackBarHostState){  snackBarHostState.showSnackbar(" Error: ${uiState.msg}")
+        is UpdateUiState.Loading ->LaunchedEffect(uiState){  snackBarHostState.showSnackbar("  Registering....")
+        }
+        is UpdateUiState.Error ->   LaunchedEffect(uiState){  snackBarHostState.showSnackbar(" Error: ${uiState.msg}")
     }
     }
 
@@ -102,7 +102,7 @@ private fun BLETagDisplay(
                     .weight(1f)
             ) {
                 Text(text = "UUID: ${entry.tag.uuid} Major: ${entry.tag.major}, Minor: ${entry.tag.minor}")
-                Text(text = "Approx.: ${entry.distance}m")
+                Text(text = "Approx.: %.4fm".format(entry.distance))
             }
             ElevatedButton(onClick = {
                 chosenTag.value =entry.tag

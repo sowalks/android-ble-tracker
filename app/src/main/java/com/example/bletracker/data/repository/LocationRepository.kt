@@ -14,19 +14,14 @@ interface LocationRepository {
     suspend fun updateRecentLocation()
 }
 class LocationFusedRepository(private val locationClient: FusedLocationProviderClient,private val permissionManager: AppPermissionManager) : LocationRepository{
-    private lateinit var recentLocation : Position
-
+    private var recentLocation : Position = Position(-200.0,-200.0)
     override suspend fun addPosition(entry: Entry): Entry {
         if(permissionManager.hasAllPermissions) {
-            if (recentLocation == null) {
-                Log.d(TAG, "No recent location")
-                updateRecentLocation()
-            }
             entry.position = Position(recentLocation.longitude, recentLocation.latitude)
             Log.d(TAG, "Position set to ${recentLocation.latitude},${recentLocation.longitude}")
         }
         else {
-            entry.position = Position(-1.0, -1.0)
+            entry.position = Position(-200.0, -200.0)
             Log.d(TAG, "Permissions not Granted")
         }
             return entry
@@ -53,7 +48,7 @@ class LocationFusedRepository(private val locationClient: FusedLocationProviderC
         }
         }
         Log.d(TAG,"Update  Location Error")
-        recentLocation = Position(-1.0,-1.0)
+        recentLocation = Position(-200.0,-200.0)
     }
 
     companion object{

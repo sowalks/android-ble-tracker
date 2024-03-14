@@ -43,7 +43,7 @@ class NetworkLocatorRepository(
 
     override suspend fun setMode(tagID: Int,mode: Boolean): Int
     {
-        return locatorApiService.setMode(SetModeBody(tagID,getDeviceID().deviceID,mode)).status
+        return locatorApiService.setMode(SetModeBody(tagID=tagID, deviceID = getDeviceID().deviceID,mode=mode)).status
     }
 
     override suspend fun submitLog(entries: Entries): List<Int> {
