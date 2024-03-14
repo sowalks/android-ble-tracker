@@ -25,8 +25,7 @@ data class Entry(
 
 @Serializable
 data class Entries (
-  var entries : List<Entry>){
-}
+  var entries : List<Entry>)
 
 
 @Serializable

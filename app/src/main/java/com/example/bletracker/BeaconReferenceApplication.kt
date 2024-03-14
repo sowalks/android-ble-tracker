@@ -19,34 +19,35 @@ class BeaconReferenceApplication : Application() {
         container = DefaultAppContainer(applicationContext)
         //Separate thread required to execute periodic requests
         // more regularly than ~15 minutes w/ Android killing it
-        //runblocking as we want this to be in order
-        executor.execute(Runnable{ runBlocking {
-            while (true) {
-                val beacons = container.logRepository.consumeLog()
-                if (beacons.entries.isNotEmpty()) {
-                    val success =
-                        try {
-                            container.networkLocatorRepository.submitLog(beacons)
-                        } catch (e: IOException) {
-                            Log.d(TAG, e.toString())
-                            listOf(-2)
-                        } catch (e: HttpException) {
-                            Log.d(TAG, e.message())
-                            listOf(-2)
+        //runBlocking as we want this to be in order
+        executor.execute {
+            runBlocking {
+                while (true) {
+                    val beacons = container.logRepository.consumeLog()
+                    if (beacons.entries.isNotEmpty()) {
+                        val success =
+                            try {
+                                container.networkLocatorRepository.submitLog(beacons)
+                            } catch (e: IOException) {
+                                Log.d(TAG, e.toString())
+                                listOf(-2)
+                            } catch (e: HttpException) {
+                                Log.d(TAG, e.message())
+                                listOf(-2)
+                            }
+                        if (success.contains(-1)) {
+                            Log.d(TAG, "Error in submitting log of ${success.size} beacons")
+                        } else if (success.size == 1 && success[0] == -2) {
+                            Log.d(TAG, "Connection Error on ${beacons.entries.size}")
                         }
-                    if (success.contains(-1)) {
-                        Log.d(TAG, "Error in submitting log of ${success.size} beacons")
-                    } else if (success.size == 1 && success[0] == -2) {
-                        Log.d(TAG, "Connection Error on ${beacons.entries.size}")
                     }
+                    Log.d(TAG, "I will log this line every ${container.loggingPeriod} forever")
+                    container.locationRepository.updateRecentLocation()
+                    Thread.sleep(container.loggingPeriod)
+                    // FileOutputStream( "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/log=_10sec.csv",true ).writeCsv(beacons)
                 }
-                Log.d(TAG, "I will log this line every ${container.loggingPeriod} forever")
-                container.locationRepository.updateRecentLocation()
-                Thread.sleep(container.loggingPeriod)
-                // FileOutputStream( "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/log=_10sec.csv",true ).writeCsv(beacons)
             }
-            }
-        })
+        }
 
         container.bleHelper.setupBeaconScanning()
     }
@@ -56,4 +57,4 @@ class BeaconReferenceApplication : Application() {
     }
 
 }
-//TODO CHANGE RUNBLOCKING COROUTINE SCOPE
+//TODO  COROUTINE SCOPE

@@ -28,8 +28,8 @@ import kotlinx.coroutines.flow.asStateFlow
 
 
 interface PermissionManager{
-    abstract val state: StateFlow<State>
-    abstract val permissionGroups : Collection<PermissionGroup>
+    val state: StateFlow<State>
+    val permissionGroups : Collection<PermissionGroup>
     fun checkPermissions()
     fun createSettingsIntent(): Intent
 }
@@ -47,7 +47,7 @@ data class State(
 
 class AppPermissionManager(private val context: Context) : PermissionManager {
 
-    override val permissionGroups: Collection<PermissionGroup> = PermissionGroupsNeeded()
+    override val permissionGroups: Collection<PermissionGroup> = permissionGroupsNeeded()
 
     private val _state = MutableStateFlow(
         State(
@@ -70,7 +70,7 @@ class AppPermissionManager(private val context: Context) : PermissionManager {
         return permissions.map(::hasAccess)
     }
 
-    private fun PermissionGroupsNeeded(): Collection<PermissionGroup> {
+    private fun permissionGroupsNeeded(): Collection<PermissionGroup> {
         val permissions : MutableList<PermissionGroup> = mutableListOf()
         permissions.add(PermissionGroup(title="Location",group=arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)))
 
@@ -78,7 +78,7 @@ class AppPermissionManager(private val context: Context) : PermissionManager {
             // As of version S (12) we need FINE_LOCATION, BLUETOOTH_SCAN and BACKGROUND_LOCATION
             // Manifest.permission.BLUETOOTH_CONNECT is not absolutely required to do just scanning,
             // but it is required if you want to access some info from the scans like the device name
-            // and the aditional cost of requsting this access is minimal, so we just request it
+            // and the additional cost of requesting this access is minimal, so we just request it
             permissions.add(PermissionGroup("Bluetooth", arrayOf(Manifest.permission.BLUETOOTH_SCAN)))
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

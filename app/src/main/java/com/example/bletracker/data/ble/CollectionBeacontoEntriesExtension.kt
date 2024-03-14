@@ -1,6 +1,5 @@
 package com.example.bletracker.data.ble
 
-import com.example.bletracker.data.source.network.model.Entries
 import com.example.bletracker.data.source.network.model.Entry
 import com.example.bletracker.data.source.network.model.Position
 import com.example.bletracker.data.source.network.model.Tag

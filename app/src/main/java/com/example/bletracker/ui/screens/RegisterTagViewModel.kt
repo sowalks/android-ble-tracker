@@ -37,15 +37,13 @@ fun registerTag(tag:Tag) {
                 registerUiState = UpdateUiState.Loading
                 Log.d(TAG, " Register Loading")
                 registerUiState = try {
-                        val status = locatorRepository.registerTag(tag=tag,mode=true)
-                        when{
-                                status == -2 -> { Log.d(TAG, "Already Registered")
-                                        UpdateUiState.Error("Register Failed")}
-                                status == -1 ->   { Log.d(TAG, "Server failed Register")
-                                        UpdateUiState.Error("Register Failed, Try again.")}
-                                else ->  { Log.d(TAG, "Success")
-                                        UpdateUiState.Success(status)}
-
+                        when (val status = locatorRepository.registerTag(tag=tag,mode=true)) {
+                            -2 -> { Log.d(TAG, "Already Registered")
+                                    UpdateUiState.Error("Register Failed")}
+                            -1 -> { Log.d(TAG, "Server failed Register")
+                                    UpdateUiState.Error("Register Failed, Try again.")}
+                            else -> { Log.d(TAG, "Success")
+                                    UpdateUiState.Success(status)}
                         }
                 }
                 catch(e : IOException){
@@ -67,7 +65,7 @@ fun registerTag(tag:Tag) {
                 return beaconSmoother.add(beacons).visibleBeacons
         }
 companion object{
-        val TAG = "RegisterViewModel"
+        const val TAG = "RegisterViewModel"
         val Factory: ViewModelProvider.Factory = viewModelFactory {
                 initializer {
                         val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)

@@ -1,16 +1,9 @@
 package com.example.bletracker.ui.screens
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,23 +13,24 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.bletracker.data.ble.toListEntry
 import com.example.bletracker.data.source.network.model.Entry
 import com.example.bletracker.data.source.network.model.Position
 import com.example.bletracker.data.source.network.model.Tag
-import kotlinx.datetime.LocalDateTime
-import java.util.UUID
-import com.example.bletracker.data.ble.toListEntry
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.viewModelScope
-import com.example.bletracker.data.ble.BeaconRangingSmoother
 import com.example.bletracker.data.source.network.model.UpdateUiState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 import org.altbeacon.beacon.Beacon
+import java.util.UUID
 
 
 @Composable
@@ -120,7 +114,7 @@ private fun BLETagDisplay(
     }
 }
     @Composable
-    fun RegisterTagDialog(tag: Tag, showDialog: Boolean, onConfirm: (Tag)->Unit, onDismiss: () -> Unit,) {
+    fun RegisterTagDialog(tag: Tag, showDialog: Boolean, onConfirm: (Tag)->Unit, onDismiss: () -> Unit) {
         if (showDialog) {
             AlertDialog(
                 title = { Text("Register this Tag?") },
@@ -161,7 +155,7 @@ fun BLEResultScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun RegDialogPreview() {
-    RegisterTagDialog(tag = Tag(45U,45U, UUID(0,1)),onConfirm={},showDialog = true,) {
+    RegisterTagDialog(tag = Tag(45U,45U, UUID(0,1)),onConfirm={},showDialog = true) {
 
     }
 }

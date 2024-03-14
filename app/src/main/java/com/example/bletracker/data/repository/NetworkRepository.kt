@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.bletracker.data.source.network.LocatorApiService
 import com.example.bletracker.data.source.network.model.DeviceID
 import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.Registrator
+import com.example.bletracker.data.source.network.model.RegistrationFields
 import com.example.bletracker.data.source.network.model.SetModeBody
 import com.example.bletracker.data.source.network.model.Tag
 
@@ -38,7 +38,7 @@ class NetworkLocatorRepository(
     }
 
     override suspend fun registerTag(tag : Tag,mode:Boolean): Int {
-        return locatorApiService.registerTag(Registrator(tag,getDeviceID().deviceID,mode)).status
+        return locatorApiService.registerTag(RegistrationFields(tag,getDeviceID().deviceID,mode)).status
     }
 
     override suspend fun setMode(tagID: Int,mode: Boolean): Int
@@ -50,6 +50,6 @@ class NetworkLocatorRepository(
         return locatorApiService.submitLog(entries).status
     }
     companion object{
-        val TAG = "LocatorRepo"
+        const val TAG = "LocatorRepo"
     }
 }

@@ -20,7 +20,7 @@ class LocationFusedRepository(private val locationClient: FusedLocationProviderC
         if(permissionManager.hasAllPermissions) {
             if (recentLocation == null) {
                 Log.d(TAG, "No recent location")
-                entry.position = recentLocation
+                updateRecentLocation()
             }
             entry.position = Position(recentLocation.longitude, recentLocation.latitude)
             Log.d(TAG, "Position set to ${recentLocation.latitude},${recentLocation.longitude}")
@@ -48,7 +48,6 @@ class LocationFusedRepository(private val locationClient: FusedLocationProviderC
             recentLocation = Position(
                 fetchedLocation.longitude,
                 fetchedLocation.latitude
-
             )
             return
         }
@@ -58,6 +57,6 @@ class LocationFusedRepository(private val locationClient: FusedLocationProviderC
     }
 
     companion object{
-        val TAG = "LocationRepo"
+        const val TAG = "LocationRepo"
     }
 }

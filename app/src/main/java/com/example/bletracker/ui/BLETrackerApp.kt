@@ -37,7 +37,6 @@ import com.example.bletracker.ui.screens.PermissionScreen
 import com.example.bletracker.ui.screens.PermissionViewModel
 import com.example.bletracker.ui.screens.ScreenTabLayout
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.altbeacon.beacon.RegionViewModel
 
@@ -82,7 +81,7 @@ fun PreviewAppSnack()
 {
     BLETrackerApp(regionViewModel =RegionViewModel(),permissionManager=FakePermissionsManager())
 }
-class FakePermissionsManager() : PermissionManager {
+class FakePermissionsManager : PermissionManager {
     override val permissionGroups: Collection<PermissionGroup>
         get() = listOf()
 

@@ -79,7 +79,7 @@ class LocateViewModel(private val locatorRepository: NetworkRepository) : ViewMo
     }
 
     companion object {
-        val TAG = "LocateViewModel"
+        const val TAG = "LocateViewModel"
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)

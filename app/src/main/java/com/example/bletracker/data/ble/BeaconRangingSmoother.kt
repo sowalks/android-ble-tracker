@@ -2,17 +2,16 @@ package com.example.bletracker.data.ble
 
 
 import org.altbeacon.beacon.Beacon
-import java.util.ArrayList
 
 /*
  * This class is used to smooth out the beacon ranging data to prevent periodic dropouts.  By
- * default, it will retain beacons in the list if detected in the past 10 secconds, but you can
+ * default, it will retain beacons in the list if detected in the past 10 seconds, but you can
  * adjust this with the smoothingWindowMillis property.
  *
  * Changed only to ensure no duplicate beacons + they are sorted so the list positions do not switch
  */
 class BeaconRangingSmoother(private val smoothingWindowMillis: Long = 10000){
-    private var beacons: ArrayList<Beacon> = ArrayList<Beacon>()
+    private var beacons: ArrayList<Beacon> = ArrayList()
     val visibleBeacons: List<Beacon>
         get() {
             val visible = ArrayList<Beacon>()
@@ -31,6 +30,6 @@ class BeaconRangingSmoother(private val smoothingWindowMillis: Long = 10000){
         return this
     }
     companion object {
-        val TAG = "BeaconRangingSmoother"
+        const val TAG = "BeaconRangingSmoother"
     }
 }

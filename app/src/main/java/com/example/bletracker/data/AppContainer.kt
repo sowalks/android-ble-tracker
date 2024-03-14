@@ -23,7 +23,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import org.altbeacon.beacon.Region
 import retrofit2.Retrofit
-import javax.net.ssl.HostnameVerifier
 
 
 
@@ -48,9 +47,9 @@ class DefaultAppContainer(context : Context) : AppContainer {
 
     //dev client to not have to worry ab self certified certificate
     private val okhttpClientDev = OkHttpClient.Builder()
-        .hostnameVerifier(HostnameVerifier {_,_->
+        .hostnameVerifier { _, _ ->
             true
-        })
+        }
         .build()
     //convert to json -  serializer defined. Use httpclient for ssl + baseurl of server
     private val retrofit: Retrofit = Retrofit.Builder()
