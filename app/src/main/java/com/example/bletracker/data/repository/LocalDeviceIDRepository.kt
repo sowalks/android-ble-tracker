@@ -5,15 +5,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.bletracker.data.source.network.model.DeviceID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import java.io.IOException
-
-
+import java.util.UUID
 
 
 interface LocalDeviceIDRepository {
@@ -27,7 +26,7 @@ class DefaultDeviceIDRepository(
 ) :  LocalDeviceIDRepository {
 
     //Reads integer deviceID from datastore
-    private val deviceIDFlow: Flow<Int> = dataStore.data
+    private val deviceIDFlow: Flow<String> = dataStore.data
         .catch {
             if (it is IOException) {
                 Log.e(TAG, "Error reading deviceID.", it)
@@ -38,27 +37,28 @@ class DefaultDeviceIDRepository(
             }
         }
         .map { preferences ->
-            preferences[DEVICE_ID] ?: -1
+            preferences[DEVICE_ID] ?: "-1"
         }
 
-    //holds consts for getting DeviceID and logging w TAG
-    companion object PreferenceKeys {
-        val DEVICE_ID = intPreferencesKey("device_id")
-        const val TAG = "DeviceIDRepo"
-    }
-
     override suspend fun get(): DeviceID {
-        // gets DeviceID from datastore as int
-        val deviceIDInt = deviceIDFlow.first()
-        return DeviceID(deviceIDInt)
+        // gets DeviceID from datastore as string
+        val deviceIDString = deviceIDFlow.first()
+        return DeviceID(UUID.fromString(deviceIDString))
     }
 
     //saves DeviceID integer to datastore as a preference
     override suspend fun set(deviceID: DeviceID) {
         dataStore.edit { preferences ->
-            preferences[DEVICE_ID] = deviceID.deviceID
+            preferences[DEVICE_ID] = deviceID.deviceID.toString()
         }
     }
+
+    //holds consts for getting DeviceID and logging w TAG
+    companion object PreferenceKeys {
+        val DEVICE_ID = stringPreferencesKey("device_id")
+        const val TAG = "DeviceIDRepo"
+    }
+
 }
 
     //TODO FIX DEVICEID FLOW

@@ -23,14 +23,17 @@ class NetworkLocatorRepository(
 
 
     private suspend fun getDeviceID(): DeviceID {
-            var testID = localDeviceIDRepository.get()
-            if(testID.deviceID < 0)
-            {
-                testID = locatorApiService.getDeviceID()
-                localDeviceIDRepository.set(testID)
-            }
-        Log.d(TAG,"DeviceID  = $testID")
-        return  testID
+        return try {
+            //try get deviceid out of local storage
+            localDeviceIDRepository.get()
+        } catch(e: IllegalArgumentException){
+            //first use of app - retrieve new ID from server
+            // then store locally
+            val testID =locatorApiService.getDeviceID()
+            localDeviceIDRepository.set(testID)
+            Log.d(TAG,"DeviceID  = $testID")
+            testID
+        }
     }
 
     override suspend fun getLocations(): Entries {

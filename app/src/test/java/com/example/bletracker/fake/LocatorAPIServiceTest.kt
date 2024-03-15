@@ -4,7 +4,6 @@ import com.example.bletracker.data.source.network.LocatorApiService
 import com.example.bletracker.rules.TestDispatcherRule
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -27,10 +26,6 @@ class LocatorAPIServiceTest {
                 .build()
             val retrofitTestService: LocatorApiService =   retrofit.create(LocatorApiService::class.java)
             val id =  retrofitTestService.getDeviceID()
-            assertTrue("Assert  get DeviceID returns a valid ID greater than 0 on server. It is ${id.deviceID}",
-                id.deviceID > 0
-            )
-
         }
     @Test
     fun  locatorApiService_verify_server_get_locations() =
