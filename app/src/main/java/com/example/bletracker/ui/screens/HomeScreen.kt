@@ -40,8 +40,6 @@ import com.example.bletracker.data.source.network.model.Position
 import com.example.bletracker.data.source.network.model.Status
 import com.example.bletracker.data.source.network.model.Tag
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import org.altbeacon.beacon.RegionViewModel
 import java.util.UUID
 
@@ -130,14 +128,14 @@ object FakeDataSource {
 
     val locatorEntries= Entries(listOf(
         Entry(
-            time = LocalDateTime(2024,12,14,9,55,0).toInstant(timeZone = TimeZone.currentSystemDefault()) ,
+            time = LocalDateTime(2024,12,14,9,55,0),
             tag =  Tag(0U,0U, UUID(0,0)),
             tagID = 1,
             distance =  3.0,
             position = Position(0.456,0.3456)
         ),
         Entry(
-            time = LocalDateTime(2025,12,14,9,55,0).toInstant(timeZone = TimeZone.currentSystemDefault())  ,
+            time = LocalDateTime(2025,12,14,9,55,0)  ,
             tag =  Tag(0U,0U, UUID(0,0)),
             tagID = 3,
             distance =  4.0,

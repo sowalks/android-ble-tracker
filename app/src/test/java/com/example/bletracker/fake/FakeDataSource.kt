@@ -10,8 +10,6 @@ import com.example.bletracker.data.source.network.model.RegistrationFields
 import com.example.bletracker.data.source.network.model.Status
 import com.example.bletracker.data.source.network.model.Tag
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import java.util.UUID
 
 object FakeDataSource {
@@ -20,14 +18,14 @@ object FakeDataSource {
 
     val locatorEntries= Entries(listOf(
         Entry(
-            time = LocalDateTime(2024,12,14,9,55,0).toInstant(timeZone = TimeZone.currentSystemDefault()) ,
+            time = LocalDateTime(2024,12,14,9,55,0),
             tag =  Tag(0U,0U, UUID(0,0)),
             tagID = 1,
             distance =  3.0,
             position = Position(0.456,0.3456)
         ),
         Entry(
-            time = LocalDateTime(2025,12,14,9,55,0).toInstant(timeZone = TimeZone.currentSystemDefault())  ,
+            time = LocalDateTime(2025,12,14,9,55,0),
             tag =  Tag(0U,0U, UUID(0,0)),
             tagID = 3,
             distance =  4.0,
@@ -37,21 +35,21 @@ object FakeDataSource {
     )
     val logEntries= Entries(listOf(
         Entry(
-            time = LocalDateTime(2021,1,22,12,30,12).toInstant(timeZone = TimeZone.currentSystemDefault())  ,
+            time = LocalDateTime(2021,1,22,12,30,12),
             tag =  Tag(43U,1026U, UUID(654,2222)),
             tagID = 0,
             distance =  4.4,
             position = Position(52.19,0.56)
         ),
         Entry(
-            time = LocalDateTime(2021,2, 21,9,20,11).toInstant(timeZone = TimeZone.currentSystemDefault())  ,
+            time = LocalDateTime(2021,2, 21,9,20,11),
             tag =  Tag(1234U,12U, UUID(653,2245)),
             tagID = 0,
             distance =  4.4,
             position = Position(52.19,0.56)
         ),
         Entry(
-            time = LocalDateTime(2011,2, 21,9,20,11).toInstant(timeZone = TimeZone.currentSystemDefault())  ,
+            time = LocalDateTime(2011,2, 21,9,20,11),
             tag =  Tag(1234U,12U, UUID(653,2245)),
             tagID = 0,
             distance =  4.4,

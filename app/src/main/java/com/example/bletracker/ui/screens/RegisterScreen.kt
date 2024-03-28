@@ -29,8 +29,6 @@ import com.example.bletracker.data.source.network.model.Position
 import com.example.bletracker.data.source.network.model.Tag
 import com.example.bletracker.data.source.network.model.UpdateUiState
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import org.altbeacon.beacon.Beacon
 import java.util.UUID
 
@@ -138,14 +136,14 @@ private fun BLETagDisplay(
 fun BLEResultScreenPreview() {
         BLELocalTags(listOf(
             Entry(
-                time = LocalDateTime(2024,12,14,9,55,0).toInstant(timeZone = TimeZone.currentSystemDefault())  ,
+                time = LocalDateTime(2024,12,14,9,55,0),
                 tag =  Tag(0U,0U, UUID(0,0)),
                 tagID = 1,
                 distance =  3.0,
                 position = Position(0.456,0.3456)
             ),
                     Entry(
-                    time = LocalDateTime(2025,12,14,9,55,0).toInstant(timeZone = TimeZone.currentSystemDefault())  ,
+                    time = LocalDateTime(2025,12,14,9,55,0),
             tag =  Tag(0U,0U, UUID(0,0)),
             tagID = 1,
             distance =  3.0,
