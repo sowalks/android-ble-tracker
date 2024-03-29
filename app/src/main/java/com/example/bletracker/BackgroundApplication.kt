@@ -9,6 +9,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+//TODO: BR
 
 class BackgroundApplication : Application() {
     lateinit var container: AppContainer
@@ -53,7 +54,7 @@ class BackgroundApplication : Application() {
     }
 
     companion object {
-        const val TAG = "BeaconReference"
+        const val TAG = "BackgroundApplication"
     }
 
 }

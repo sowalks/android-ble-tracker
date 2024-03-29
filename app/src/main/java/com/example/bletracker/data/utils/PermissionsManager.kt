@@ -13,6 +13,8 @@ package com.example.bletracker.data.utils
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Modified from Privacy Code Lab.
  */
 import android.Manifest
 import android.content.Context
@@ -25,7 +27,7 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
+//TODO: BR
 
 interface PermissionManager{
     val state: StateFlow<State>

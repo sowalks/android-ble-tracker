@@ -16,7 +16,7 @@ import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.BeaconParser
 import org.altbeacon.beacon.Region
-
+//TODO: BR
 interface BLEBeaconHelper{
     fun setupBeaconScanning()
     fun setupForegroundService()
