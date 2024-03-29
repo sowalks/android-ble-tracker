@@ -1,4 +1,4 @@
-package com.example.bletracker.ui.screens
+package com.example.bletracker.ui.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -10,10 +10,10 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bletracker.BeaconReferenceApplication
+import com.example.bletracker.BackgroundApplication
+import com.example.bletracker.data.model.Entries
+import com.example.bletracker.data.model.UpdateUiState
 import com.example.bletracker.data.repository.NetworkRepository
-import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.UpdateUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -82,7 +82,7 @@ class LocateViewModel(private val locatorRepository: NetworkRepository) : ViewMo
         const val TAG = "LocateViewModel"
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)
+                val application = (this[APPLICATION_KEY] as BackgroundApplication)
                 val locatorRepository = application.container.networkLocatorRepository
                 LocateViewModel(locatorRepository = locatorRepository)
             }

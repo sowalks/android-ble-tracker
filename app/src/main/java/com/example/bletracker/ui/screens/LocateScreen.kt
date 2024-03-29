@@ -49,12 +49,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.bletracker.R
-import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.Entry
-import com.example.bletracker.data.source.network.model.Position
-import com.example.bletracker.data.source.network.model.Tag
-import com.example.bletracker.data.source.network.model.UpdateUiState
-import com.example.bletracker.ui.screens.LocateViewModel.Companion.TAG
+import com.example.bletracker.data.model.Entries
+import com.example.bletracker.data.model.Entry
+import com.example.bletracker.data.model.Position
+import com.example.bletracker.data.model.Tag
+import com.example.bletracker.data.model.UpdateUiState
+import com.example.bletracker.ui.viewmodel.LocateViewModel
+import com.example.bletracker.ui.viewmodel.LocateViewModel.Companion.TAG
+import com.example.bletracker.ui.viewmodel.LocatorUiState
 import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 
@@ -97,7 +99,7 @@ fun LocateScreen(
 }
 
 @Composable
-fun ResultScreen(tags: Entries, setMode: (Int,Boolean)->Unit,modifier: Modifier = Modifier) {
+fun ResultScreen(tags: Entries, setMode: (Int, Boolean)->Unit, modifier: Modifier = Modifier) {
     if(tags.entries.isEmpty())
     {
         Box(
@@ -120,7 +122,7 @@ fun ResultScreen(tags: Entries, setMode: (Int,Boolean)->Unit,modifier: Modifier 
 @Composable
 private fun OwnedTagDisplay(tag: Entry,
                             setMode: (Int,Boolean)->Unit,
-                       modifier: Modifier = Modifier){
+                            modifier: Modifier = Modifier){
     val showDialog = remember { mutableStateOf(false) }
     //set mode when button clicked
     if (showDialog.value){
@@ -211,7 +213,8 @@ fun SetModeDialog(tagID: Int, showDialog: Boolean, onConfirm: (Int,Boolean)->Uni
 @Preview(showBackground = true)
 @Composable
 fun ResultScreenPreview() {
-    ResultScreen(Entries(listOf(
+    ResultScreen(
+        Entries(listOf(
         Entry(
             time = LocalDateTime(2024,12,14,9,55,0) ,
             tag =  Tag(0U,0U, UUID(0,0)),
@@ -219,7 +222,7 @@ fun ResultScreenPreview() {
             distance =  3.0,
             position = Position(0.456,0.3456)
         )
-    )),setMode ={_,_->},modifier = Modifier.fillMaxWidth())}
+    )),setMode ={ _, _->},modifier = Modifier.fillMaxWidth())}
 
 @Preview(showBackground = true)
 @Composable

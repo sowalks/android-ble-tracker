@@ -1,6 +1,6 @@
 package com.example.bletracker.fake
 
-import com.example.bletracker.data.source.network.LocatorApiService
+import com.example.bletracker.data.utils.network.LocatorApiService
 import com.example.bletracker.rules.TestDispatcherRule
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import junit.framework.TestCase.assertEquals

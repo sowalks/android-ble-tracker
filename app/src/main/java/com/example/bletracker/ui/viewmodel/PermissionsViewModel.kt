@@ -1,4 +1,4 @@
-package com.example.bletracker.ui.screens
+package com.example.bletracker.ui.viewmodel
 
 
 /*
@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bletracker.data.repository.PermissionManager
+import com.example.bletracker.data.utils.PermissionManager
 
 class PermissionViewModel(val permissions: PermissionManager) : ViewModel() {
 

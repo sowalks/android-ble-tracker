@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.example.bletracker.ui.viewmodel.PermissionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -31,24 +31,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bletracker.data.model.DeviceID
+import com.example.bletracker.data.model.Entries
+import com.example.bletracker.data.model.Entry
+import com.example.bletracker.data.model.LogStatus
+import com.example.bletracker.data.model.Position
+import com.example.bletracker.data.model.Status
+import com.example.bletracker.data.model.Tag
 import com.example.bletracker.data.repository.NetworkRepository
-import com.example.bletracker.data.source.network.model.DeviceID
-import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.Entry
-import com.example.bletracker.data.source.network.model.LogStatus
-import com.example.bletracker.data.source.network.model.Position
-import com.example.bletracker.data.source.network.model.Status
-import com.example.bletracker.data.source.network.model.Tag
+import com.example.bletracker.ui.viewmodel.LocateViewModel
+import com.example.bletracker.ui.viewmodel.RegisterViewModel
 import kotlinx.datetime.LocalDateTime
 import org.altbeacon.beacon.RegionViewModel
 import java.util.UUID
 
 @Composable
 fun ScreenTabLayout(regionViewModel:RegionViewModel,
-                        snackBarHostState : SnackbarHostState,
-                        modifier: Modifier = Modifier,
-                       locatorViewModel: LocateViewModel = viewModel(factory=LocateViewModel.Factory),
-                      registerTagViewModel: RegisterTagViewModel = viewModel(factory=RegisterTagViewModel.Factory)
+                    snackBarHostState : SnackbarHostState,
+                    modifier: Modifier = Modifier,
+                    locatorViewModel: LocateViewModel = viewModel(factory= LocateViewModel.Factory),
+                    registerTagViewModel: RegisterViewModel = viewModel(factory= RegisterViewModel.Factory)
 ) {
 
     val tabs = listOf("Register Tags", "Locate Tags")
@@ -94,7 +96,7 @@ fun AppPreview(){
         regionViewModel = RegionViewModel(),
         snackBarHostState = SnackbarHostState(),
         locatorViewModel = LocateViewModel(FakeNetworkRepository()),
-        registerTagViewModel = RegisterTagViewModel(FakeNetworkRepository()),
+        registerTagViewModel = RegisterViewModel(FakeNetworkRepository()),
 
         )
 }

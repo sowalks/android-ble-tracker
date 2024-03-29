@@ -30,12 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.bletracker.data.repository.PermissionGroup
-import com.example.bletracker.data.repository.PermissionManager
-import com.example.bletracker.data.repository.State
+import com.example.bletracker.data.utils.PermissionGroup
+import com.example.bletracker.data.utils.PermissionManager
+import com.example.bletracker.data.utils.State
 import com.example.bletracker.ui.screens.PermissionScreen
-import com.example.bletracker.ui.screens.PermissionViewModel
 import com.example.bletracker.ui.screens.ScreenTabLayout
+import com.example.bletracker.ui.viewmodel.PermissionViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.altbeacon.beacon.RegionViewModel

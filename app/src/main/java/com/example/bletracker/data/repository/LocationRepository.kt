@@ -2,8 +2,9 @@ package com.example.bletracker.data.repository
 
 import android.annotation.SuppressLint
 import android.util.Log
-import com.example.bletracker.data.source.network.model.Entry
-import com.example.bletracker.data.source.network.model.Position
+import com.example.bletracker.data.model.Entry
+import com.example.bletracker.data.model.Position
+import com.example.bletracker.data.utils.AppPermissionManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource

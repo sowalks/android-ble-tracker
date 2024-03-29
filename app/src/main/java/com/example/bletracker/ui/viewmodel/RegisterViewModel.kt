@@ -1,4 +1,4 @@
-package com.example.bletracker.ui.screens
+package com.example.bletracker.ui.viewmodel
 
 
 
@@ -12,11 +12,11 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bletracker.BeaconReferenceApplication
-import com.example.bletracker.data.ble.BeaconRangingSmoother
+import com.example.bletracker.BackgroundApplication
+import com.example.bletracker.data.model.Tag
+import com.example.bletracker.data.model.UpdateUiState
 import com.example.bletracker.data.repository.NetworkRepository
-import com.example.bletracker.data.source.network.model.Tag
-import com.example.bletracker.data.source.network.model.UpdateUiState
+import com.example.bletracker.data.utils.ble.BeaconRangingSmoother
 import kotlinx.coroutines.launch
 import org.altbeacon.beacon.Beacon
 import retrofit2.HttpException
@@ -25,14 +25,14 @@ import java.io.IOException
 
 
 
-class RegisterTagViewModel(val locatorRepository:NetworkRepository,private val smoothingPeriod: Long = 10000) : ViewModel(){
+class RegisterViewModel(val locatorRepository:NetworkRepository, private val smoothingPeriod: Long = 10000) : ViewModel(){
 
 // uiState is used to update screen, but private set to only be modified here
 var registerUiState: UpdateUiState by mutableStateOf(UpdateUiState.Idle)
         private set
-private val beaconSmoother :  BeaconRangingSmoother =  BeaconRangingSmoother(smoothingPeriod)
+private val beaconSmoother : BeaconRangingSmoother =  BeaconRangingSmoother(smoothingPeriod)
 
-fun registerTag(tag:Tag) {
+fun registerTag(tag: Tag) {
         viewModelScope.launch{
                 registerUiState = UpdateUiState.Loading
                 Log.d(TAG, " Register Loading")
@@ -68,10 +68,10 @@ companion object{
         const val TAG = "RegisterViewModel"
         val Factory: ViewModelProvider.Factory = viewModelFactory {
                 initializer {
-                        val application = (this[APPLICATION_KEY] as BeaconReferenceApplication)
+                        val application = (this[APPLICATION_KEY] as BackgroundApplication)
                         val locatorRepository = application.container.networkLocatorRepository
                         val smoothingPeriod = application.container.smoothingPeriod
-                        RegisterTagViewModel(locatorRepository = locatorRepository,smoothingPeriod=smoothingPeriod)
+                        RegisterViewModel(locatorRepository = locatorRepository,smoothingPeriod=smoothingPeriod)
                 }
         }
 }

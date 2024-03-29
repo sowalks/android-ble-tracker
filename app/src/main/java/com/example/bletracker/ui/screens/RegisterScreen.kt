@@ -23,11 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.bletracker.data.ble.toListEntry
-import com.example.bletracker.data.source.network.model.Entry
-import com.example.bletracker.data.source.network.model.Position
-import com.example.bletracker.data.source.network.model.Tag
-import com.example.bletracker.data.source.network.model.UpdateUiState
+import com.example.bletracker.data.model.Entry
+import com.example.bletracker.data.model.Position
+import com.example.bletracker.data.model.Tag
+import com.example.bletracker.data.model.UpdateUiState
+import com.example.bletracker.data.utils.ble.toListEntry
+import com.example.bletracker.ui.viewmodel.RegisterViewModel
 import kotlinx.datetime.LocalDateTime
 import org.altbeacon.beacon.Beacon
 import java.util.UUID
@@ -35,7 +36,7 @@ import java.util.UUID
 
 @Composable
 fun RegisterScreen(
-    registerTagViewModel: RegisterTagViewModel,
+    registerTagViewModel: RegisterViewModel,
     localTags: State<Collection<Beacon>>,
     modifier: Modifier = Modifier,
     snackBarHostState: SnackbarHostState

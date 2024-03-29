@@ -1,4 +1,5 @@
-package com.example.bletracker.data.source.network.model
+package com.example.bletracker.data.model
+import com.example.bletracker.data.utils.network.UUIDSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.UUID

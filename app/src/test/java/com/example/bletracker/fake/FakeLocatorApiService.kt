@@ -1,10 +1,10 @@
 package com.example.bletracker.fake
 
-import com.example.bletracker.data.source.network.LocatorApiService
-import com.example.bletracker.data.source.network.model.DeviceID
-import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.LogStatus
-import com.example.bletracker.data.source.network.model.Status
+import com.example.bletracker.data.utils.network.LocatorApiService
+import com.example.bletracker.data.model.DeviceID
+import com.example.bletracker.data.model.Entries
+import com.example.bletracker.data.model.LogStatus
+import com.example.bletracker.data.model.Status
 import com.example.bletracker.data.source.network.model.Registrator
 
 

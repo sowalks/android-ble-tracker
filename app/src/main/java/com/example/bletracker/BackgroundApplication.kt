@@ -2,15 +2,15 @@ package com.example.bletracker
 
 import android.app.Application
 import android.util.Log
-import com.example.bletracker.data.AppContainer
-import com.example.bletracker.data.DefaultAppContainer
+import com.example.bletracker.data.utils.AppContainer
+import com.example.bletracker.data.utils.DefaultAppContainer
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class BeaconReferenceApplication : Application() {
+class BackgroundApplication : Application() {
     lateinit var container: AppContainer
     private val executor: ExecutorService = Executors.newFixedThreadPool(1)
 

@@ -1,4 +1,4 @@
-package com.example.bletracker.data.ble
+package com.example.bletracker.data.utils.ble
 
 import android.app.Notification
 import android.app.NotificationChannel

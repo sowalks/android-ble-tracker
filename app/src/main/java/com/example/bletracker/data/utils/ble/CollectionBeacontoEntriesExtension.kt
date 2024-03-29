@@ -1,8 +1,8 @@
-package com.example.bletracker.data.ble
+package com.example.bletracker.data.utils.ble
 
-import com.example.bletracker.data.source.network.model.Entry
-import com.example.bletracker.data.source.network.model.Position
-import com.example.bletracker.data.source.network.model.Tag
+import com.example.bletracker.data.model.Entry
+import com.example.bletracker.data.model.Position
+import com.example.bletracker.data.model.Tag
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.datetime.toLocalDateTime

@@ -1,4 +1,4 @@
-package com.example.bletracker.data.repository
+package com.example.bletracker.data.utils
 /*
  * Copyright (C) 2022 The Android Open Source Project
  *

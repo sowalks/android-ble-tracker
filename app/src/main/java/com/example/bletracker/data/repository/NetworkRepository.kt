@@ -1,18 +1,18 @@
 package com.example.bletracker.data.repository
 
 import android.util.Log
-import com.example.bletracker.data.source.network.LocatorApiService
-import com.example.bletracker.data.source.network.model.DeviceID
-import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.RegistrationFields
-import com.example.bletracker.data.source.network.model.SetModeBody
-import com.example.bletracker.data.source.network.model.Tag
+import com.example.bletracker.data.model.DeviceID
+import com.example.bletracker.data.model.Entries
+import com.example.bletracker.data.model.RegistrationFields
+import com.example.bletracker.data.model.SetModeBody
+import com.example.bletracker.data.model.Tag
+import com.example.bletracker.data.utils.network.LocatorApiService
 
 
 interface NetworkRepository {
     suspend fun getLocations() : Entries
     suspend fun submitLog(entries : Entries) : List<Int>
-    suspend fun registerTag(tag : Tag,mode:Boolean) : Int
+    suspend fun registerTag(tag : Tag, mode:Boolean) : Int
     suspend fun setMode(tagID: Int,mode:Boolean) : Int
 }
 
@@ -40,7 +40,7 @@ class NetworkLocatorRepository(
         return locatorApiService.getLocations(getDeviceID())
     }
 
-    override suspend fun registerTag(tag : Tag,mode:Boolean): Int {
+    override suspend fun registerTag(tag : Tag, mode:Boolean): Int {
         return locatorApiService.registerTag(RegistrationFields(tag,getDeviceID().deviceID,mode)).status
     }
 

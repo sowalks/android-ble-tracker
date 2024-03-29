@@ -1,5 +1,6 @@
-package com.example.bletracker.data.source.network.model
+package com.example.bletracker.data.model
 
+import com.example.bletracker.data.utils.network.UUIDSerializer
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -29,6 +30,23 @@ data class Entries (
 
 
 @Serializable
+data class Tag (
+    var major : UShort,
+    var minor : UShort,
+    @Serializable(with= UUIDSerializer::class)
+    var uuid  : UUID
+)
+@Serializable
+data class Position (
+    var longitude : Double,
+    var latitude : Double
+)
+@Serializable
+data class DeviceID (
+    @Serializable(with= UUIDSerializer::class)
+    @SerialName("device_id") var deviceID : UUID
+)
+@Serializable
 data class Status(
     var status : Int
 )
@@ -36,5 +54,6 @@ data class Status(
 data class LogStatus(
     var status : List<Int>
 )
+
 
 

@@ -25,7 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.bletracker.data.repository.AppPermissionManager
+import com.example.bletracker.data.utils.AppPermissionManager
 import com.example.bletracker.ui.BLETrackerApp
 import com.example.bletracker.ui.theme.MarsPhotosTheme
 import kotlinx.coroutines.launch
@@ -43,7 +43,6 @@ class MainActivity : ComponentActivity() {
         permissionManager = AppPermissionManager(applicationContext)
         setContent {
             MarsPhotosTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

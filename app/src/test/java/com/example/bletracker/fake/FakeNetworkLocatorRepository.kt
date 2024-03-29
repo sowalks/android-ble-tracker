@@ -2,8 +2,8 @@ package com.example.bletracker.fake
 
 
 import com.example.bletracker.data.repository.NetworkRepository
-import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.Tag
+import com.example.bletracker.data.model.Entries
+import com.example.bletracker.data.model.Tag
 
 
 class FakeNetworkRepository(): NetworkRepository {

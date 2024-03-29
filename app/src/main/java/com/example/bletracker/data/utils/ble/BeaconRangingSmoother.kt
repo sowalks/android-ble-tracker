@@ -1,4 +1,4 @@
-package com.example.bletracker.data.ble
+package com.example.bletracker.data.utils.ble
 
 
 import org.altbeacon.beacon.Beacon

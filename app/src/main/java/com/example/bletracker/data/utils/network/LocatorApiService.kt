@@ -1,10 +1,10 @@
-package com.example.bletracker.data.source.network
-import com.example.bletracker.data.source.network.model.DeviceID
-import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.LogStatus
-import com.example.bletracker.data.source.network.model.RegistrationFields
-import com.example.bletracker.data.source.network.model.SetModeBody
-import com.example.bletracker.data.source.network.model.Status
+package com.example.bletracker.data.utils.network
+import com.example.bletracker.data.model.DeviceID
+import com.example.bletracker.data.model.Entries
+import com.example.bletracker.data.model.LogStatus
+import com.example.bletracker.data.model.RegistrationFields
+import com.example.bletracker.data.model.SetModeBody
+import com.example.bletracker.data.model.Status
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

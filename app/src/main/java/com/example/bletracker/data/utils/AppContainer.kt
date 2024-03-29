@@ -1,12 +1,9 @@
-package com.example.bletracker.data
+package com.example.bletracker.data.utils
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.bletracker.data.ble.BLEBeaconHelper
-import com.example.bletracker.data.ble.BLEHelper
-import com.example.bletracker.data.repository.AppPermissionManager
 import com.example.bletracker.data.repository.BLELogRepository
 import com.example.bletracker.data.repository.DefaultDeviceIDRepository
 import com.example.bletracker.data.repository.LocalDeviceIDRepository
@@ -14,8 +11,9 @@ import com.example.bletracker.data.repository.LocationFusedRepository
 import com.example.bletracker.data.repository.LocationRepository
 import com.example.bletracker.data.repository.LogRepository
 import com.example.bletracker.data.repository.NetworkLocatorRepository
-import com.example.bletracker.data.repository.PermissionManager
-import com.example.bletracker.data.source.network.LocatorApiService
+import com.example.bletracker.data.utils.ble.BLEBeaconHelper
+import com.example.bletracker.data.utils.ble.BLEHelper
+import com.example.bletracker.data.utils.network.LocatorApiService
 import com.google.android.gms.location.LocationServices
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -89,7 +87,7 @@ class DefaultAppContainer(context : Context) : AppContainer {
 
     override val smoothingPeriod: Long = 10000L
 
-    override val bleHelper :BLEBeaconHelper by lazy {
+    override val bleHelper : BLEBeaconHelper by lazy {
         BLEHelper(context, logRepository, locationRepository, region, scanPeriod = scanPeriod,betweenScanPeriod=betweenScansPeriod,smoothingPeriod=smoothingPeriod)
     }
 

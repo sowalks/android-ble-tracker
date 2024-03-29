@@ -1,14 +1,14 @@
 package com.example.bletracker.fake
 
 
-import com.example.bletracker.data.source.network.model.DeviceID
-import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.Entry
-import com.example.bletracker.data.source.network.model.LogStatus
-import com.example.bletracker.data.source.network.model.Position
-import com.example.bletracker.data.source.network.model.RegistrationFields
-import com.example.bletracker.data.source.network.model.Status
-import com.example.bletracker.data.source.network.model.Tag
+import com.example.bletracker.data.model.DeviceID
+import com.example.bletracker.data.model.Entries
+import com.example.bletracker.data.model.Entry
+import com.example.bletracker.data.model.LogStatus
+import com.example.bletracker.data.model.Position
+import com.example.bletracker.data.model.RegistrationFields
+import com.example.bletracker.data.model.Status
+import com.example.bletracker.data.model.Tag
 import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 

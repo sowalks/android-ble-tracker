@@ -1,7 +1,7 @@
 package com.example.bletracker.data.repository
 
-import com.example.bletracker.data.source.network.model.Entries
-import com.example.bletracker.data.source.network.model.Entry
+import com.example.bletracker.data.model.Entries
+import com.example.bletracker.data.model.Entry
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 

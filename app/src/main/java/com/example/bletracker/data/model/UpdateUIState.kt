@@ -1,4 +1,4 @@
-package com.example.bletracker.data.source.network.model
+package com.example.bletracker.data.model
 
 sealed interface  UpdateUiState {
     data class Success(val status: Int) : UpdateUiState
