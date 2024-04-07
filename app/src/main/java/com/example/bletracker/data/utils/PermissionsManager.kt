@@ -14,7 +14,7 @@ package com.example.bletracker.data.utils
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modified from Privacy Code Lab.
+ * Modified from Privacy Code Lab and android-beacon-library-reference-kotlin.
  */
 import android.Manifest
 import android.content.Context
@@ -78,9 +78,6 @@ class AppPermissionManager(private val context: Context) : PermissionManager {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             // As of version S (12) we need FINE_LOCATION, BLUETOOTH_SCAN and BACKGROUND_LOCATION
-            // Manifest.permission.BLUETOOTH_CONNECT is not absolutely required to do just scanning,
-            // but it is required if you want to access some info from the scans like the device name
-            // and the additional cost of requesting this access is minimal, so we just request it
             permissions.add(PermissionGroup("Bluetooth", arrayOf(Manifest.permission.BLUETOOTH_SCAN)))
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
