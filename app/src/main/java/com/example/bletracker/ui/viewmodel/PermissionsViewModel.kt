@@ -40,7 +40,7 @@ class PermissionViewModel(val permissions: PermissionManager) : ViewModel() {
     }
 
     class Factory(permissions: PermissionManager) {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
+        val factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 PermissionViewModel(permissions = permissions)
             }

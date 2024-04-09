@@ -10,15 +10,15 @@ import java.util.UUID
 @Serializable
 data class Entry(
     // Give 0 value for the tag field not used.
-    var time: LocalDateTime,
-    var tag: Tag =  Tag(0U,0U,UUID(0,0)),
+    var time: LocalDateTime = LocalDateTime(1970,1,1,0,0,0,0),
+    var tag: Tag =  Tag(),
     @SerialName("tag_id")
     var tagID: Int = 0,
-    var distance: Double,
+    var distance: Double = 0.0,
     @SerialName("device_position")
     var position: Position
 ) {
-    //deep copy by serialization, if fields change, it is easier and more concise(esp. w cbor))
+    //deep copy by serialization, if fields change, it is easier/concise
     fun deepCopy() : Entry {
         return Json.decodeFromString(Json.encodeToString(serializer(),this))
     }
@@ -31,10 +31,10 @@ data class Entries (
 
 @Serializable
 data class Tag (
-    var major : UShort,
-    var minor : UShort,
+    var major : UShort = 0U,
+    var minor : UShort = 0U,
     @Serializable(with= UUIDSerializer::class)
-    var uuid  : UUID
+    var uuid  : UUID = UUID(0,0)
 )
 @Serializable
 data class Position (

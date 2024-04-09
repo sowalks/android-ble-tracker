@@ -10,7 +10,7 @@ interface  LogRepository{
     suspend fun consumeLog() : Entries
     suspend fun appendLog(entries: List<Entry>)
 }
-class BLELogRepository ()  : LogRepository {
+class BLELogRepository  : LogRepository {
 
     // Mutex to make writes to cached values thread-safe.
     private val logMutex = Mutex()

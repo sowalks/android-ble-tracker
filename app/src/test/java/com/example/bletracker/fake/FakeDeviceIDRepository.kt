@@ -1,7 +1,7 @@
 package com.example.bletracker.fake
 
-import com.example.bletracker.data.repository.LocalDeviceIDRepository
 import com.example.bletracker.data.model.DeviceID
+import com.example.bletracker.data.repository.LocalDeviceIDRepository
 
 class FakeDeviceIDRepository() : LocalDeviceIDRepository {
     override suspend fun get(): DeviceID {
@@ -9,6 +9,6 @@ class FakeDeviceIDRepository() : LocalDeviceIDRepository {
     }
 
     override suspend fun set(deviceID: DeviceID) {
-        TODO("Not yet implemented")
+        return
     }
 }

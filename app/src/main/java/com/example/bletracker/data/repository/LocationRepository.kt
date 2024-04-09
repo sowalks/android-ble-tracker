@@ -17,12 +17,14 @@ interface LocationRepository {
 class LocationFusedRepository(private val locationClient: FusedLocationProviderClient,private val permissionManager: AppPermissionManager) : LocationRepository{
     private var recentLocation : Position = Position(-200.0,-200.0)
     override suspend fun addPosition(entry: Entry): Entry {
-        if(permissionManager.hasAllPermissions) {
-            entry.position = Position(recentLocation.longitude, recentLocation.latitude)
+        if(permissionManager.hasAllPermissions()) {
+            entry.position.longitude = recentLocation.longitude
+            entry.position.latitude = recentLocation.latitude
             Log.d(TAG, "Position set to ${recentLocation.latitude},${recentLocation.longitude}")
         }
         else {
-            entry.position = Position(-200.0, -200.0)
+            entry.position.longitude =-200.0
+            entry.position.latitude = -200.0
             Log.d(TAG, "Permissions not Granted")
         }
             return entry
@@ -31,8 +33,8 @@ class LocationFusedRepository(private val locationClient: FusedLocationProviderC
 
     @SuppressLint("MissingPermission")
     override suspend fun updateRecentLocation() {
-        //To get more accurate or fresher device location use this method
-        if(permissionManager.hasAllPermissions){
+        //get more recent/updated location
+        if(permissionManager.hasAllPermissions()){
         val priority = Priority.PRIORITY_HIGH_ACCURACY
         val result = locationClient.getCurrentLocation(
             priority,

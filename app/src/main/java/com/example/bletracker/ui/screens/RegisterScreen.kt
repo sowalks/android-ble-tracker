@@ -60,7 +60,8 @@ fun RegisterScreen(
 }
 
 @Composable
-fun BLELocalTags(entries: List<Entry>, registerTag: (Tag) -> Unit, modifier: Modifier = Modifier) {
+fun BLELocalTags(entries: List<Entry>, registerTag: (Entry) -> Unit, modifier: Modifier = Modifier) {
+    //Display all nearby entries
     if(entries.isEmpty())
     {
         Box(
@@ -72,7 +73,8 @@ fun BLELocalTags(entries: List<Entry>, registerTag: (Tag) -> Unit, modifier: Mod
     }
     else {
         LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
-            items(items = entries) { entry ->
+            //sort by nearest, makes registering easier
+            items(items = entries.sortedBy{it.distance}) { entry ->
                 BLETagDisplay(entry = entry, registerTag=registerTag,modifier = modifier)
             }
         }
@@ -82,13 +84,14 @@ fun BLELocalTags(entries: List<Entry>, registerTag: (Tag) -> Unit, modifier: Mod
 @Composable
 private fun BLETagDisplay(
     entry: Entry,
-    registerTag : (Tag) -> Unit,
+    registerTag : (Entry) -> Unit,
     modifier: Modifier = Modifier) {
+    //Chosen entry required if entry list changes while register dialog is still open
     val showDialog = remember { mutableStateOf(false) }
-    val chosenTag = remember { mutableStateOf( Tag(0U,0U,UUID(0,0)))}
+    val chosenEntry = remember { mutableStateOf(Entry(position=Position(-200.0,-200.0)))}
     if (showDialog.value) {
         RegisterTagDialog(
-            tag = chosenTag.value,
+            entry = chosenEntry.value,
             showDialog = showDialog.value,
             onConfirm = registerTag,
             onDismiss = { showDialog.value = false })
@@ -106,7 +109,7 @@ private fun BLETagDisplay(
                 Text(text = "Approx.: %.4fm".format(entry.distance))
             }
             ElevatedButton(onClick = {
-                chosenTag.value =entry.tag
+                chosenEntry.value =entry
                 showDialog.value = true
             }) {
                 Text("Register")
@@ -115,15 +118,15 @@ private fun BLETagDisplay(
     }
 }
     @Composable
-    fun RegisterTagDialog(tag: Tag, showDialog: Boolean, onConfirm: (Tag)->Unit, onDismiss: () -> Unit) {
+    fun RegisterTagDialog(entry: Entry, showDialog: Boolean, onConfirm: (Entry)->Unit, onDismiss: () -> Unit) {
         if (showDialog) {
             AlertDialog(
                 title = { Text("Register this Tag?") },
-                text = { Text("UUID: ${tag.uuid} Major: ${tag.major}, Minor: ${tag.minor}") },
+                text = { Text("UUID: ${entry.tag.uuid} Major: ${entry.tag.major}, Minor: ${entry.tag.minor}") },
                 onDismissRequest =  onDismiss ,
                 confirmButton = {
                     Button(onClick = {
-                        onConfirm(tag)
+                        onConfirm(entry)
                         onDismiss()
                     }) { Text("REGISTER") }
                 },
@@ -138,14 +141,14 @@ fun BLEResultScreenPreview() {
         BLELocalTags(listOf(
             Entry(
                 time = LocalDateTime(2024,12,14,9,55,0),
-                tag =  Tag(0U,0U, UUID(0,0)),
+                tag =  Tag(),
                 tagID = 1,
                 distance =  3.0,
                 position = Position(0.456,0.3456)
             ),
                     Entry(
                     time = LocalDateTime(2025,12,14,9,55,0),
-            tag =  Tag(0U,0U, UUID(0,0)),
+            tag =  Tag(),
             tagID = 1,
             distance =  3.0,
             position = Position(0.456,0.3456)
@@ -156,7 +159,7 @@ fun BLEResultScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun RegDialogPreview() {
-    RegisterTagDialog(tag = Tag(45U,45U, UUID(0,1)),onConfirm={},showDialog = true) {
+    RegisterTagDialog(entry=   Entry(tag=Tag(45U,45U, UUID(0,1)),position=Position(0.0,0.0)),onConfirm={},showDialog = true) {
 
     }
 }

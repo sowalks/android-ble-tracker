@@ -6,13 +6,12 @@ import com.example.bletracker.data.model.RegistrationFields
 import com.example.bletracker.data.model.SetModeBody
 import com.example.bletracker.data.model.Status
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 
 
 interface  LocatorApiService {
-    @GET("device")
+    @POST("device")
     //device id generate
     suspend fun getDeviceID() : DeviceID
     @POST("locations")

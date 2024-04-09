@@ -61,7 +61,6 @@ import com.example.bletracker.ui.viewmodel.LocateViewModel
 import com.example.bletracker.ui.viewmodel.LocateViewModel.Companion.TAG
 import com.example.bletracker.ui.viewmodel.LocatorUiState
 import kotlinx.datetime.LocalDateTime
-import java.util.UUID
 
 
 @Composable
@@ -109,7 +108,7 @@ fun ResultScreen(tags: Entries, setMode: (Int, Boolean)->Unit, modifier: Modifie
             contentAlignment = Alignment.Center,
             modifier = modifier
         ) {
-            Text(text = "Owned Tags could not be Located")
+            Text(text = "No Tags Owned.")
         }
     }
     else {
@@ -220,7 +219,7 @@ fun ResultScreenPreview() {
         Entries(listOf(
         Entry(
             time = LocalDateTime(2024,12,14,9,55,0) ,
-            tag =  Tag(0U,0U, UUID(0,0)),
+            tag =  Tag(),
             tagID = 1,
             distance =  3.0,
             position = Position(0.456,0.3456)

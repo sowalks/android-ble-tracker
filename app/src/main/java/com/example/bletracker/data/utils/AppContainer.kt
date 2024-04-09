@@ -20,15 +20,21 @@ package com.example.bletracker.data.utils
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.bletracker.data.ProtoOwnedEntries
+import com.example.bletracker.data.datasource.OwnedTagsSerializer
+import com.example.bletracker.data.datasource.OwnedTagsSource
 import com.example.bletracker.data.repository.BLELogRepository
 import com.example.bletracker.data.repository.DefaultDeviceIDRepository
 import com.example.bletracker.data.repository.LocalDeviceIDRepository
+import com.example.bletracker.data.repository.LocalOwnedTagsRepository
 import com.example.bletracker.data.repository.LocationFusedRepository
 import com.example.bletracker.data.repository.LocationRepository
 import com.example.bletracker.data.repository.LogRepository
 import com.example.bletracker.data.repository.NetworkLocatorRepository
+import com.example.bletracker.data.repository.OwnedTagsRepository
 import com.example.bletracker.data.utils.ble.BLEBeaconHelper
 import com.example.bletracker.data.utils.ble.BLEHelper
 import com.example.bletracker.data.utils.network.LocatorApiService
@@ -37,9 +43,9 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.altbeacon.beacon.Region
 import retrofit2.Retrofit
-
 
 
 interface AppContainer {
@@ -51,22 +57,37 @@ interface AppContainer {
     val smoothingPeriod: Long
     val locationRepository: LocationRepository
     val permissionManager: PermissionManager
+    val ownedTagsRepository: OwnedTagsRepository
 }
+
 
 //only ever a single instance, so initialize in context
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "device")
 
+val Context.ownedEntriesStore: DataStore<ProtoOwnedEntries> by
+dataStore(
+    fileName =  "owned_tags.pb", serializer = OwnedTagsSerializer
+)
+
+
 class DefaultAppContainer(context : Context) : AppContainer {
 
+
     private val baseURL =
-        "https://10.252.41.53:5000"
+        " https://192.168.43.145:5000"
 
     //dev client to not have to worry ab self certified certificate
     private val okhttpClientDev = OkHttpClient.Builder()
         .hostnameVerifier { _, _ ->
             true
         }
+        //logging to help solve issue with sent json not matching received json
+        .addInterceptor(interceptor = HttpLoggingInterceptor().apply
+        {
+            this.level = HttpLoggingInterceptor.Level.BODY
+        })
         .build()
+
     //convert to json -  serializer defined. Use httpclient for ssl + baseurl of server
     private val retrofit: Retrofit = Retrofit.Builder()
         .client(okhttpClientDev)
@@ -90,7 +111,11 @@ class DefaultAppContainer(context : Context) : AppContainer {
 
     private val  locationClient by lazy{  LocationServices.getFusedLocationProviderClient(context)}
 
+    private val dataSourceTags by lazy { OwnedTagsSource(context.ownedEntriesStore)}
 
+    override val ownedTagsRepository : OwnedTagsRepository by lazy {
+        LocalOwnedTagsRepository(dataSourceTags)
+    }
 
     override val locationRepository: LocationRepository by lazy {
         LocationFusedRepository(locationClient,permissionManager)

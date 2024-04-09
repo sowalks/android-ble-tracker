@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_package = "com.example.bletracker.data";
+option java_multiple_files = true;
+
+message ProtoOwnedEntry {
+  uint32 tagId = 1;
+  string  time = 2;
+  string uuid = 3; //uuid as string/no support for uuid or datetime
+  uint32 major = 4;
+  uint32 minor = 5; //unsigned int/ no short support
+  double distance = 6;
+  double  longitude = 7;
+  double  latitude = 8;
+
+}
+
+
+message ProtoOwnedEntries {
+  repeated ProtoOwnedEntry ownedtag =  1;
+}

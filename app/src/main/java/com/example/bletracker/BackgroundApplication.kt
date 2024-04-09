@@ -9,7 +9,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-//TODO: BR
+
 
 class BackgroundApplication : Application() {
     lateinit var container: AppContainer
@@ -29,6 +29,7 @@ class BackgroundApplication : Application() {
                     if (beacons.entries.isNotEmpty()) {
                         val success =
                             try {
+                                container.ownedTagsRepository.addLog(beacons)
                                 container.networkLocatorRepository.submitLog(beacons)
                             } catch (e: IOException) {
                                 Log.d(TAG, e.toString())
@@ -58,4 +59,3 @@ class BackgroundApplication : Application() {
     }
 
 }
-//TODO  COROUTINE SCOPE

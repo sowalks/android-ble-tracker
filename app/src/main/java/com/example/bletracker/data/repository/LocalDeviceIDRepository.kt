@@ -25,7 +25,7 @@ class DefaultDeviceIDRepository(
     private val dataStore: DataStore<Preferences>
 ) :  LocalDeviceIDRepository {
 
-    //Reads integer deviceID from datastore
+
     private val deviceIDFlow: Flow<String> = dataStore.data
         .catch {
             if (it is IOException) {
@@ -40,6 +40,7 @@ class DefaultDeviceIDRepository(
             preferences[DEVICE_ID] ?: "-1"
         }
 
+    //Reads integer deviceID from datastore
     override suspend fun get(): DeviceID {
         // gets DeviceID from datastore as string
         val deviceIDString = deviceIDFlow.first()
@@ -61,4 +62,3 @@ class DefaultDeviceIDRepository(
 
 }
 
-    //TODO FIX DEVICEID FLOW

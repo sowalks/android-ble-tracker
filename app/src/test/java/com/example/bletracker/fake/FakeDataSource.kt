@@ -19,14 +19,14 @@ object FakeDataSource {
     val locatorEntries= Entries(listOf(
         Entry(
             time = LocalDateTime(2024,12,14,9,55,0),
-            tag =  Tag(0U,0U, UUID(0,0)),
+            tag =  Tag(),
             tagID = 1,
             distance =  3.0,
             position = Position(0.456,0.3456)
         ),
         Entry(
             time = LocalDateTime(2025,12,14,9,55,0),
-            tag =  Tag(0U,0U, UUID(0,0)),
+            tag =  Tag(),
             tagID = 3,
             distance =  4.0,
             position = Position(0.456,0.3456)

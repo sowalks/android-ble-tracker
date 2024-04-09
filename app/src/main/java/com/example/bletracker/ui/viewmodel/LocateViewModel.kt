@@ -31,6 +31,7 @@ import com.example.bletracker.BackgroundApplication
 import com.example.bletracker.data.model.Entries
 import com.example.bletracker.data.model.UpdateUiState
 import com.example.bletracker.data.repository.NetworkRepository
+import com.example.bletracker.data.repository.OwnedTagsRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -42,7 +43,9 @@ sealed interface   LocatorUiState {
     object Loading : LocatorUiState
 }
 
-class LocateViewModel(private val locatorRepository: NetworkRepository) : ViewModel() {
+class LocateViewModel(private val locatorRepository: NetworkRepository,
+private val ownedTagsRepository: OwnedTagsRepository
+) : ViewModel() {
 
     var locatorUiState: LocatorUiState by mutableStateOf(LocatorUiState.Loading)
         private set
@@ -60,7 +63,7 @@ class LocateViewModel(private val locatorRepository: NetworkRepository) : ViewMo
         viewModelScope.launch {
             locatorUiState = LocatorUiState.Loading
             locatorUiState = try {
-                tags = locatorRepository.getLocations()
+                tags = ownedTagsRepository.getRecentEntries(locatorRepository.getLocations())
                 LocatorUiState.Success
             }
             catch (e: IOException) {
@@ -98,7 +101,8 @@ class LocateViewModel(private val locatorRepository: NetworkRepository) : ViewMo
             initializer {
                 val application = (this[APPLICATION_KEY] as BackgroundApplication)
                 val locatorRepository = application.container.networkLocatorRepository
-                LocateViewModel(locatorRepository = locatorRepository)
+                val localOwnedRepository = application.container.ownedTagsRepository
+                LocateViewModel(locatorRepository = locatorRepository, ownedTagsRepository = localOwnedRepository)
             }
         }
     }

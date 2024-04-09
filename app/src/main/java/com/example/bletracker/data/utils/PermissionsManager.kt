@@ -27,12 +27,12 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-//TODO: BR
 
 interface PermissionManager{
     val state: StateFlow<State>
     val permissionGroups : Collection<PermissionGroup>
     fun checkPermissions()
+    fun hasAllPermissions(): Boolean
     fun createSettingsIntent(): Intent
 }
 data class PermissionGroup(
@@ -58,8 +58,10 @@ class AppPermissionManager(private val context: Context) : PermissionManager {
         )
     )
     override val state = _state.asStateFlow()
-    val hasAllPermissions: Boolean
-        get() = _state.value.hasAllAccess
+    override fun  hasAllPermissions(): Boolean {
+        checkPermissions()
+        return _state.value.hasAllAccess
+    }
 
     private fun hasAccess(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(

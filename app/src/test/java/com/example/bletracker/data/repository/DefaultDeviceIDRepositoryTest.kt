@@ -1,3 +1,28 @@
+package com.example.bletracker.data.repository
+
+import com.example.bletracker.fake.FakeDataSource
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+
+class DefaultDeviceIDRepositoryTest {
+
+    @Before
+    fun setUp() {
+    }
+
+    @After
+    fun tearDown() {
+    }
+
+    @Test
+    fun get() {
+    }
+
+    @Test
+    fun set() {
+    }
+}
 package com.example.bletracker.fake
 import android.content.Context
 

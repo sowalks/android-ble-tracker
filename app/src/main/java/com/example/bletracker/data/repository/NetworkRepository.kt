@@ -71,6 +71,6 @@ class NetworkLocatorRepository(
         return locatorApiService.submitLog(entries).status
     }
     companion object{
-        const val TAG = "LocatorRepo"
+        const val TAG = "NetworkRepo"
     }
 }

@@ -29,9 +29,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bletracker.BackgroundApplication
-import com.example.bletracker.data.model.Tag
+import com.example.bletracker.data.model.Entry
 import com.example.bletracker.data.model.UpdateUiState
+import com.example.bletracker.data.repository.LocationRepository
 import com.example.bletracker.data.repository.NetworkRepository
+import com.example.bletracker.data.repository.OwnedTagsRepository
 import com.example.bletracker.data.utils.ble.BeaconRangingSmoother
 import kotlinx.coroutines.launch
 import org.altbeacon.beacon.Beacon
@@ -41,24 +43,30 @@ import java.io.IOException
 
 
 
-class RegisterViewModel(val locatorRepository:NetworkRepository, private val smoothingPeriod: Long = 10000) : ViewModel(){
+class RegisterViewModel(val locatorRepository:NetworkRepository,
+                        private val ownedTagsRepository: OwnedTagsRepository,
+                        private val locationRepository: LocationRepository,
+                        private val smoothingPeriod: Long = 10000) : ViewModel(){
 
 // uiState is used to update screen, but private set to only be modified here
 var registerUiState: UpdateUiState by mutableStateOf(UpdateUiState.Idle)
         private set
 private val beaconSmoother : BeaconRangingSmoother =  BeaconRangingSmoother(smoothingPeriod)
 
-fun registerTag(tag: Tag) {
+fun registerTag(entry: Entry) {
+        //regiter tag, in server, store in owned repo
         viewModelScope.launch{
                 registerUiState = UpdateUiState.Loading
                 Log.d(TAG, " Register Loading")
                 registerUiState = try {
-                        when (val status = locatorRepository.registerTag(tag=tag,mode=true)) {
+                        when (val status = locatorRepository.registerTag(tag=entry.tag,mode=true)) {
                             -2 -> { Log.d(TAG, "Already Registered")
                                     UpdateUiState.Error("Register Failed")}
                             -1 -> { Log.d(TAG, "Server failed Register")
                                     UpdateUiState.Error("Register Failed, Try again.")}
                             else -> { Log.d(TAG, "Success")
+                                    // we need to add users' current location for recent tags
+                                    ownedTagsRepository.addTag(locationRepository.addPosition(entry),status)
                                     UpdateUiState.Success(status)}
                         }
                 }
@@ -86,8 +94,13 @@ companion object{
                 initializer {
                         val application = (this[APPLICATION_KEY] as BackgroundApplication)
                         val locatorRepository = application.container.networkLocatorRepository
+                        val ownedTagsRepository = application.container.ownedTagsRepository
+                        val locationRepository = application.container.locationRepository
                         val smoothingPeriod = application.container.smoothingPeriod
-                        RegisterViewModel(locatorRepository = locatorRepository,smoothingPeriod=smoothingPeriod)
+                        RegisterViewModel(locatorRepository = locatorRepository,
+                                ownedTagsRepository = ownedTagsRepository,
+                                locationRepository=locationRepository,
+                                smoothingPeriod=smoothingPeriod)
                 }
         }
 }

@@ -40,7 +40,9 @@ import com.example.bletracker.data.model.LogStatus
 import com.example.bletracker.data.model.Position
 import com.example.bletracker.data.model.Status
 import com.example.bletracker.data.model.Tag
+import com.example.bletracker.data.repository.LocationRepository
 import com.example.bletracker.data.repository.NetworkRepository
+import com.example.bletracker.data.repository.OwnedTagsRepository
 import com.example.bletracker.ui.viewmodel.LocateViewModel
 import com.example.bletracker.ui.viewmodel.RegisterViewModel
 import kotlinx.datetime.LocalDateTime
@@ -97,8 +99,8 @@ fun AppPreview(){
     ScreenTabLayout(
         regionViewModel = RegionViewModel(),
         snackBarHostState = SnackbarHostState(),
-        locatorViewModel = LocateViewModel(FakeNetworkRepository()),
-        registerTagViewModel = RegisterViewModel(FakeNetworkRepository()),
+        locatorViewModel = LocateViewModel(FakeNetworkRepository(),FakeOwnedTagRepository()),
+        registerTagViewModel = RegisterViewModel(FakeNetworkRepository(),FakeOwnedTagRepository(), FakeLocationRepository()),
 
         )
 }
@@ -124,6 +126,31 @@ class FakeNetworkRepository: NetworkRepository {
     }
 }
 
+class FakeLocationRepository:LocationRepository{
+    override suspend fun addPosition(entry: Entry): Entry {
+        return entry
+    }
+
+    override suspend fun updateRecentLocation() {
+        return
+    }
+
+}
+
+class FakeOwnedTagRepository: OwnedTagsRepository {
+
+    override suspend fun addTag(entry: Entry, tagID: Int) {
+        return
+    }
+
+    override suspend fun addLog(log: Entries) {
+       return
+    }
+
+    override suspend fun getRecentEntries(log: Entries): Entries {
+        return log
+    }
+}
 
 
 object FakeDataSource {
@@ -133,14 +160,14 @@ object FakeDataSource {
     val locatorEntries= Entries(listOf(
         Entry(
             time = LocalDateTime(2024,12,14,9,55,0),
-            tag =  Tag(0U,0U, UUID(0,0)),
+            tag =  Tag(),
             tagID = 1,
             distance =  3.0,
             position = Position(0.456,0.3456)
         ),
         Entry(
             time = LocalDateTime(2025,12,14,9,55,0)  ,
-            tag =  Tag(0U,0U, UUID(0,0)),
+            tag =  Tag(),
             tagID = 3,
             distance =  4.0,
             position = Position(0.456,0.3456)
