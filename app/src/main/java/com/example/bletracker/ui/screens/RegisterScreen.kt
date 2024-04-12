@@ -141,14 +141,14 @@ fun BLEResultScreenPreview() {
         BLELocalTags(listOf(
             Entry(
                 time = LocalDateTime(2024,12,14,9,55,0),
-                tag =  Tag(),
+                tag = Tag(0U,0U),
                 tagID = 1,
                 distance =  3.0,
                 position = Position(0.456,0.3456)
             ),
                     Entry(
                     time = LocalDateTime(2025,12,14,9,55,0),
-            tag =  Tag(),
+            tag =  Tag(0U,0U),
             tagID = 1,
             distance =  3.0,
             position = Position(0.456,0.3456)

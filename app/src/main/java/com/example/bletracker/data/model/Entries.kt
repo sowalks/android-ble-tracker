@@ -11,7 +11,7 @@ import java.util.UUID
 data class Entry(
     // Give 0 value for the tag field not used.
     var time: LocalDateTime = LocalDateTime(1970,1,1,0,0,0,0),
-    var tag: Tag =  Tag(),
+    var tag: Tag =  Tag(0U,0U),
     @SerialName("tag_id")
     var tagID: Int = 0,
     var distance: Double = 0.0,
@@ -30,9 +30,11 @@ data class Entries (
 
 
 @Serializable
+//Kotlin does not serialize defaults - we want error if there is 0 for a uuid
+//But not for major/minor, so they lack defaults.
 data class Tag (
-    var major : UShort = 0U,
-    var minor : UShort = 0U,
+    var major : UShort,
+    var minor : UShort,
     @Serializable(with= UUIDSerializer::class)
     var uuid  : UUID = UUID(0,0)
 )

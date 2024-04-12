@@ -74,7 +74,7 @@ class DefaultAppContainer(context : Context) : AppContainer {
 
 
     private val baseURL =
-        " https://192.168.43.145:5000"
+        "https://192.168.33.204:5000"
 
     //dev client to not have to worry ab self certified certificate
     private val okhttpClientDev = OkHttpClient.Builder()
