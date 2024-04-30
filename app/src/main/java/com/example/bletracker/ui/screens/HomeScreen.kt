@@ -127,8 +127,8 @@ class FakeNetworkRepository: NetworkRepository {
 }
 
 class FakeLocationRepository:LocationRepository{
-    override suspend fun addPosition(entry: Entry): Entry {
-        return entry
+    override fun addPosition(): Position {
+        return Position(-1.80,-1.80)
     }
 
     override suspend fun updateRecentLocation() {

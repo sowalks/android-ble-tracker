@@ -1,5 +1,6 @@
 package com.example.bletracker.data.repository
 
+import android.util.Log
 import com.example.bletracker.data.ProtoOwnedEntry
 import com.example.bletracker.data.datasource.OwnedTagsSource
 import com.example.bletracker.data.model.Entries
@@ -43,6 +44,7 @@ class LocalOwnedTagsRepository(private val dataSourceTags: OwnedTagsSource): Own
                 // add owned entry,  or most recent entry in log
                 // for each ownedEntry in store
                 // either locally match uuid/major/minor, or tagid from network call
+                //reversed for most recent, logs are always in order
                 var finalEntry = ownedEntry
                 log.entries.reversed().forEach { newEntry ->
                     if ((newEntry.tag.uuid.toString() == finalEntry.uuid
@@ -66,6 +68,7 @@ class LocalOwnedTagsRepository(private val dataSourceTags: OwnedTagsSource): Own
                     else if( newEntry.tagID == ownedEntry.tagId
                                 && newEntry.time > finalEntry.time.toLocalDateTime())
                     {
+                        Log.d(TAG,"Unblocked tag ${newEntry.tagID} tracked in server")
                         finalEntry = ProtoOwnedEntry.newBuilder()
                             .setTagId(newEntry.tagID)
                             .setDistance(newEntry.distance)
@@ -105,5 +108,8 @@ class LocalOwnedTagsRepository(private val dataSourceTags: OwnedTagsSource): Own
                     )
                 }
         )
+    }
+    companion object{
+        const val TAG = "OwnedTagRepo"
     }
 }

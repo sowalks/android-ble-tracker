@@ -1,6 +1,5 @@
 package com.example.bletracker.data.model
 
-import com.example.bletracker.data.utils.network.UUIDSerializer
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

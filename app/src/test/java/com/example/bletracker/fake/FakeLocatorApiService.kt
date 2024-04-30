@@ -6,7 +6,7 @@ import com.example.bletracker.data.model.LogStatus
 import com.example.bletracker.data.model.RegistrationFields
 import com.example.bletracker.data.model.SetModeBody
 import com.example.bletracker.data.model.Status
-import com.example.bletracker.data.utils.network.LocatorApiService
+import com.example.bletracker.data.datasource.LocatorApiService
 
 
 class FakeLocatorApiService : LocatorApiService {

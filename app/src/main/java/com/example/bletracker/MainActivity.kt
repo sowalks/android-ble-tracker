@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.bletracker.data.utils.AppPermissionManager
-import com.example.bletracker.ui.BLETrackerApp
+import com.example.bletracker.ui.screens.BLETrackerApp
 import com.example.bletracker.ui.theme.MarsPhotosTheme
 import kotlinx.coroutines.launch
 import org.altbeacon.beacon.BeaconManager

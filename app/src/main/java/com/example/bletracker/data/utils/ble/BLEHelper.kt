@@ -94,20 +94,24 @@ class BLEHelper(private val context: Context,
                     ?: 0)
             if (rangeAgeMillis < scanPeriod) {
                 Log.d(TAG, "Ranged: ${beacons.count()} beacons")
-                for (beacon: Beacon in beacons) {
-                    Log.d(TAG, "$beacon about ${beacon.distance} meters away")
-                }
+                //runblocking, as we want to block background thread before continuing
                 runBlocking {
-                    logRepository.appendLog(beacons.toListEntry().map{locationRepository.addPosition(it)})
+                    //Turn beacons to entries, add location and log them
+                    val currentPosition = locationRepository.addPosition()
+                    logRepository.appendLog(beacons.toListEntry().map{
+                        it.position.longitude = currentPosition.longitude
+                        it.position.latitude = currentPosition.latitude
+                        it
+                    },)
                 }
             } else {
-                Log.d(TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
+                //Log.d(TAG, "Ignoring stale ranged beacons from $rangeAgeMillis millis ago")
             }
 }
 
     companion object {
         const val TAG = "BLEServiceHelper"
     }
-
+//TODO: SET longScanForcingEnabled ON TO STOP ISSUE IN FIRST LOG
 }
 

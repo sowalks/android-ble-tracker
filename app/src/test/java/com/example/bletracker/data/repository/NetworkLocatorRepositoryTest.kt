@@ -1,11 +1,10 @@
 package com.example.bletracker.fake
 
 import com.example.bletracker.data.repository.NetworkLocatorRepository
-import com.example.bletracker.data.utils.network.LocatorApiService
+import com.example.bletracker.data.datasource.LocatorApiService
 
 package com.example.bletracker.data.repository
 
-import com.example.bletracker.fake.FakeDataSource
 import com.example.bletracker.rules.TestDispatcherRule
 import com.example.bletracker.ui.screens.MarsUiState
 import com.example.bletracker.ui.screens.MarsViewModel

@@ -66,7 +66,11 @@ fun registerTag(entry: Entry) {
                                     UpdateUiState.Error("Register Failed, Try again.")}
                             else -> { Log.d(TAG, "Success")
                                     // we need to add users' current location for recent tags
-                                    ownedTagsRepository.addTag(locationRepository.addPosition(entry),status)
+                                    //status will be tagID as it is not error status
+                                    val pos  = locationRepository.addPosition()
+                                    entry.position.latitude = pos.latitude
+                                    entry.position.longitude = pos.longitude
+                                    ownedTagsRepository.addTag(entry,status)
                                     UpdateUiState.Success(status)}
                         }
                 }

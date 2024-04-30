@@ -18,6 +18,7 @@ class BackgroundApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         container = DefaultAppContainer(applicationContext)
+        container.bleHelper.setupBeaconScanning()
         //Separate thread required to execute periodic requests
         // more regularly than ~15 minutes w/ Android killing it
         //runBlocking as we want this to be in order
@@ -44,14 +45,14 @@ class BackgroundApplication : Application() {
                             Log.d(TAG, "Connection Error on ${beacons.entries.size}")
                         }
                     }
-                    Log.d(TAG, "I will log this line every ${container.loggingPeriod} forever")
-                    Thread.sleep(container.loggingPeriod)
-                    // FileOutputStream( "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/log=_10sec.csv",true ).writeCsv(beacons)
+                    //Simulate requesting location, using same method as locate viewmodel.
+                    Thread.sleep(container.loggingPeriod / 2)
+                    container.ownedTagsRepository.getRecentEntries(container.networkLocatorRepository.getLocations())
+                    Thread.sleep(container.loggingPeriod / 2)
+                    //Log.d(TAG, "I will log this line every ${container.loggingPeriod}.")
                 }
             }
         }
-
-        container.bleHelper.setupBeaconScanning()
     }
 
     companion object {

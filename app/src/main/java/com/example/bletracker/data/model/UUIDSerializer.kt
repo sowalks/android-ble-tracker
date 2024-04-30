@@ -1,4 +1,4 @@
-package com.example.bletracker.data.utils.network
+package com.example.bletracker.data.model
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

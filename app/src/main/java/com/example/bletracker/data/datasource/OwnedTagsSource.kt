@@ -12,12 +12,11 @@ import java.io.IOException
 class OwnedTagsSource(
     private val ownedTagsDataStore: DataStore<ProtoOwnedEntries>
 ) {
-    private val TAG: String = "LocalOwnedTagsRepo"
 
     val ownedTagsFlow: Flow<ProtoOwnedEntries> = ownedTagsDataStore.data
         .catch { exception ->
             if (exception is IOException) {
-                Log.e(TAG, "Error reading.", exception)
+                Log.e(Companion.TAG, "Error reading.", exception)
                 emit(ProtoOwnedEntries.getDefaultInstance())
             } else {
                 throw exception
@@ -26,7 +25,7 @@ class OwnedTagsSource(
 
 
     suspend fun setAllTags(ownedEntries: List<ProtoOwnedEntry>) {
-        Log.e(TAG, "Stored new list ${ownedEntries.toString()}")
+        Log.e(Companion.TAG, "Stored new list ${ownedEntries.toString()}")
         ownedTagsDataStore.updateData { tagStore ->
             tagStore.toBuilder()
                 .clearOwnedtag()
@@ -36,12 +35,16 @@ class OwnedTagsSource(
     }
 
     suspend fun addNewTag(ownedEntry: ProtoOwnedEntry) {
-        Log.e(TAG, "Stored new entry ${ownedEntry.toString()}")
+        Log.e(Companion.TAG, "Stored new entry ${ownedEntry.toString()}")
         ownedTagsDataStore.updateData { tagStore ->
             tagStore.toBuilder()
                 .addOwnedtag(ownedEntry)
                 .build()
         }
+    }
+
+    companion object {
+        const val TAG: String = "OwnedTagsSource"
     }
 
 

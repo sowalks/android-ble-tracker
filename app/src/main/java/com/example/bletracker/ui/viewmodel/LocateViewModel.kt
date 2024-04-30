@@ -91,6 +91,9 @@ private val ownedTagsRepository: OwnedTagsRepository
         }
     }
 
+
+    //Event when a  user has already been notified, prevents repeated notification
+    //when switching tabs, by defaulting to idle
     fun userNotified(){
         setModeState = UpdateUiState.Idle
     }

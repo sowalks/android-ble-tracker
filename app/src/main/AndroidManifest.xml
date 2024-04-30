@@ -38,7 +38,7 @@
         android:theme="@style/Theme.MarsPhotos"
         tools:targetApi="34">
         <activity
-            android:name="MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MarsPhotos">
             <intent-filter>

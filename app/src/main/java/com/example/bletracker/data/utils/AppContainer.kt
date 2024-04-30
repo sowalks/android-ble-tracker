@@ -24,7 +24,7 @@ import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.bletracker.data.ProtoOwnedEntries
-import com.example.bletracker.data.datasource.OwnedTagsSerializer
+import com.example.bletracker.data.model.OwnedTagsSerializer
 import com.example.bletracker.data.datasource.OwnedTagsSource
 import com.example.bletracker.data.repository.BLELogRepository
 import com.example.bletracker.data.repository.DefaultDeviceIDRepository
@@ -37,7 +37,7 @@ import com.example.bletracker.data.repository.NetworkLocatorRepository
 import com.example.bletracker.data.repository.OwnedTagsRepository
 import com.example.bletracker.data.utils.ble.BLEBeaconHelper
 import com.example.bletracker.data.utils.ble.BLEHelper
-import com.example.bletracker.data.utils.network.LocatorApiService
+import com.example.bletracker.data.datasource.LocatorApiService
 import com.google.android.gms.location.LocationServices
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -73,8 +73,8 @@ dataStore(
 class DefaultAppContainer(context : Context) : AppContainer {
 
 
-    private val baseURL =
-        "https://192.168.33.204:5000"
+    private val baseURL = "https://192.168.33.204:5000"
+
 
     //dev client to not have to worry ab self certified certificate
     private val okhttpClientDev = OkHttpClient.Builder()
@@ -84,7 +84,7 @@ class DefaultAppContainer(context : Context) : AppContainer {
         //logging to help solve issue with sent json not matching received json
         .addInterceptor(interceptor = HttpLoggingInterceptor().apply
         {
-            this.level = HttpLoggingInterceptor.Level.BODY
+            this.level = HttpLoggingInterceptor.Level.BODY // BODY FOR FULL DETAILS
         })
         .build()
 

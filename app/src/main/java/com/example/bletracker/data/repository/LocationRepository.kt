@@ -2,7 +2,6 @@ package com.example.bletracker.data.repository
 
 import android.annotation.SuppressLint
 import android.util.Log
-import com.example.bletracker.data.model.Entry
 import com.example.bletracker.data.model.Position
 import com.example.bletracker.data.utils.AppPermissionManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -11,23 +10,13 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.tasks.await
 
 interface LocationRepository {
-    suspend fun addPosition(entry: Entry) : Entry
+    fun addPosition() : Position
     suspend fun updateRecentLocation()
 }
 class LocationFusedRepository(private val locationClient: FusedLocationProviderClient,private val permissionManager: AppPermissionManager) : LocationRepository{
     private var recentLocation : Position = Position(-200.0,-200.0)
-    override suspend fun addPosition(entry: Entry): Entry {
-        if(permissionManager.hasAllPermissions()) {
-            entry.position.longitude = recentLocation.longitude
-            entry.position.latitude = recentLocation.latitude
-            Log.d(TAG, "Position set to ${recentLocation.latitude},${recentLocation.longitude}")
-        }
-        else {
-            entry.position.longitude =-200.0
-            entry.position.latitude = -200.0
-            Log.d(TAG, "Permissions not Granted")
-        }
-            return entry
+    override fun addPosition(): Position {
+        return Position(recentLocation.longitude,recentLocation.latitude)
         }
 
 
@@ -50,7 +39,7 @@ class LocationFusedRepository(private val locationClient: FusedLocationProviderC
             return
         }
         }
-        Log.d(TAG,"Update  Location Error")
+        Log.d(TAG,"Permissions not Granted")
         recentLocation = Position(-200.0,-200.0)
     }
 

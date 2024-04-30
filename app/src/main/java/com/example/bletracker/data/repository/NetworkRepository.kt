@@ -19,12 +19,12 @@ package com.example.bletracker.data.repository
  */
 
 import android.util.Log
+import com.example.bletracker.data.datasource.LocatorApiService
 import com.example.bletracker.data.model.DeviceID
 import com.example.bletracker.data.model.Entries
 import com.example.bletracker.data.model.RegistrationFields
 import com.example.bletracker.data.model.SetModeBody
 import com.example.bletracker.data.model.Tag
-import com.example.bletracker.data.utils.network.LocatorApiService
 
 
 interface NetworkRepository {
@@ -64,7 +64,7 @@ class NetworkLocatorRepository(
 
     override suspend fun setMode(tagID: Int,mode: Boolean): Int
     {
-        return locatorApiService.setMode(SetModeBody(tagID=tagID, deviceID = getDeviceID().deviceID,mode=mode)).status
+        return locatorApiService.setMode(tagID, SetModeBody(deviceID = getDeviceID().deviceID,mode=mode)).status
     }
 
     override suspend fun submitLog(entries: Entries): List<Int> {

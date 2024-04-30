@@ -17,7 +17,7 @@
  */
 
 
-package com.example.bletracker.ui
+package com.example.bletracker.ui.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,8 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bletracker.data.utils.PermissionManager
-import com.example.bletracker.ui.screens.PermissionScreen
-import com.example.bletracker.ui.screens.ScreenTabLayout
 import com.example.bletracker.ui.viewmodel.PermissionViewModel
 import org.altbeacon.beacon.RegionViewModel
 

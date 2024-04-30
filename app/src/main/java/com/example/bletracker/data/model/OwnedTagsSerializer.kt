@@ -1,4 +1,4 @@
-package com.example.bletracker.data.datasource
+package com.example.bletracker.data.model
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer

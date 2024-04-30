@@ -5,10 +5,9 @@ import org.altbeacon.beacon.Beacon
 
 /*
  * This class is used to smooth out the beacon ranging data to prevent periodic dropouts.  By
- * default, it will retain beacons in the list if detected in the past 10 seconds, but you can
- * adjust this with the smoothingWindowMillis property.
+ * default, it will retain beacons in the list if detected in the past 10 seconds
  *
- * Changed only to ensure no duplicate beacons + they are sorted so the list positions do not switch
+ * Changed only from reference to ensure no duplicate beacons + they are sorted so the list positions do not switch
  */
 class BeaconRangingSmoother(private val smoothingWindowMillis: Long = 10000){
     private var beacons: ArrayList<Beacon> = ArrayList()
