@@ -1,4 +1,4 @@
-package com.example.bletracker.ui.viewmodel
+package uk.ac.cam.smw98.bletracker.ui.viewmodel
 
 import org.junit.Test
 

@@ -26,11 +26,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.bletracker"
+    namespace = "uk.ac.cam.smw98.bletracker"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.bletracker"
+        applicationId = "uk.ac.cam.smw98.bletracker"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

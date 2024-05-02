@@ -1,6 +1,6 @@
-package com.example.bletracker.data.repository
+package uk.ac.cam.smw98.bletracker.data.repository
 
-import com.example.bletracker.fake.FakeDataSource
+import uk.ac.cam.smw98.bletracker.fake.FakeDataSource
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -23,7 +23,7 @@ class DefaultDeviceIDRepositoryTest {
     fun set() {
     }
 }
-package com.example.bletracker.fake
+package uk.ac.cam.smw98.bletracker.fake
 import android.content.Context
 
 import androidx.datastore.core.DataStore
@@ -33,8 +33,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.bletracker.data.repository.DefaultDeviceIDRepository
-import com.example.bletracker.data.repository.LocalDeviceIDRepository
+import uk.ac.cam.smw98.bletracker.data.repository.DefaultDeviceIDRepository
+import uk.ac.cam.smw98.bletracker.data.repository.LocalDeviceIDRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import junit.framework.TestCase.assertEquals

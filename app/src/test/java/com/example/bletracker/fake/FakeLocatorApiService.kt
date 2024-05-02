@@ -1,12 +1,12 @@
-package com.example.bletracker.fake
+package uk.ac.cam.smw98.bletracker.fake
 
-import com.example.bletracker.data.model.DeviceID
-import com.example.bletracker.data.model.Entries
-import com.example.bletracker.data.model.LogStatus
-import com.example.bletracker.data.model.RegistrationFields
-import com.example.bletracker.data.model.SetModeBody
-import com.example.bletracker.data.model.Status
-import com.example.bletracker.data.datasource.LocatorApiService
+import uk.ac.cam.smw98.bletracker.data.model.DeviceID
+import uk.ac.cam.smw98.bletracker.data.model.Entries
+import uk.ac.cam.smw98.bletracker.data.model.LogStatus
+import uk.ac.cam.smw98.bletracker.data.model.RegistrationFields
+import uk.ac.cam.smw98.bletracker.data.model.SetModeBody
+import uk.ac.cam.smw98.bletracker.data.model.Status
+import uk.ac.cam.smw98.bletracker.data.datasource.LocatorApiService
 
 
 class FakeLocatorApiService : LocatorApiService {

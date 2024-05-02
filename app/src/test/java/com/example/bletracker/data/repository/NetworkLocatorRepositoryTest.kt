@@ -1,13 +1,13 @@
-package com.example.bletracker.fake
+package uk.ac.cam.smw98.bletracker.fake
 
-import com.example.bletracker.data.repository.NetworkLocatorRepository
-import com.example.bletracker.data.datasource.LocatorApiService
+import uk.ac.cam.smw98.bletracker.data.repository.NetworkLocatorRepository
+import uk.ac.cam.smw98.bletracker.data.datasource.LocatorApiService
 
-package com.example.bletracker.data.repository
+package uk.ac.cam.smw98.bletracker.data.repository
 
-import com.example.bletracker.rules.TestDispatcherRule
-import com.example.bletracker.ui.screens.MarsUiState
-import com.example.bletracker.ui.screens.MarsViewModel
+import uk.ac.cam.smw98.bletracker.rules.TestDispatcherRule
+import uk.ac.cam.smw98.bletracker.ui.screens.MarsUiState
+import uk.ac.cam.smw98.bletracker.ui.screens.MarsViewModel
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -29,9 +29,9 @@ class NetworkLocatorRepositoryTest {
 
     @Test
     fun submitLog() {}
-    package com.example.bletracker.fake
+    package uk.ac.cam.smw98.bletracker.fake
 
-    import com.example.bletracker.data.repository.NetworkLocatorRepository
+    import uk.ac.cam.smw98.bletracker.data.repository.NetworkLocatorRepository
     import junit.framework.TestCase.assertEquals
     import kotlinx.coroutines.test.runTest
     import org.junit.Test
@@ -41,18 +41,18 @@ class NetworkLocatorRepositoryTest {
         fun networkLocatorRepository_getLocations_verifyPhotoList() = runTest {
 
             val repository = NetworkLocatorRepository(
-                locatorApiService = FakeLocatorApiService(),
+                trackerApiService = FakeLocatorApiService(),
                 localDeviceIDRepository = FakeDeviceIDRepository()
             )
             assertEquals(FakeDataSource.locatorEntries, repository.getLocations())
             assertEquals(FakeDataSource.logStatusSuccess.status, repository.submitLog(FakeDataSource.logEntries))
             assertEquals(FakeDataSource.statusSuccess.status, repository.registerTag(FakeDataSource.registrator.tag,FakeDataSource.registrator.mode))
         }
-        package com.example.bletracker.fake
+        package uk.ac.cam.smw98.bletracker.fake
 
-        import com.example.bletracker.rules.TestDispatcherRule
-        import com.example.bletracker.ui.screens.MarsUiState
-        import com.example.bletracker.ui.screens.MarsViewModel
+        import uk.ac.cam.smw98.bletracker.rules.TestDispatcherRule
+        import uk.ac.cam.smw98.bletracker.ui.screens.MarsUiState
+        import uk.ac.cam.smw98.bletracker.ui.screens.MarsViewModel
         import junit.framework.TestCase.assertEquals
         import kotlinx.coroutines.test.runTest
         import org.junit.Rule
@@ -78,15 +78,15 @@ class NetworkLocatorRepositoryTest {
         }
     }
     @ -1,6 +1,7 @@
-    package com.example.bletracker.fake
-    package com.example.bletracker.data.utils
+    package uk.ac.cam.smw98.bletracker.fake
+    package uk.ac.cam.smw98.bletracker.data.utils
 
-    import com.example.bletracker.data.utils.network.LocatorApiService
-    import com.example.bletracker.fake.FakeDataSource
-    import com.example.bletracker.rules.TestDispatcherRule
+    import uk.ac.cam.smw98.bletracker.data.utils.network.LocatorApiService
+    import uk.ac.cam.smw98.bletracker.fake.FakeDataSource
+    import uk.ac.cam.smw98.bletracker.rules.TestDispatcherRule
     import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
     import junit.framework.TestCase.assertEquals
-    @ -36,13 +37,16 @@ class LocatorAPIServiceTest {
+    @ -36,13 +37,16 @@ class TrackerAPIServiceTest {
         .build()
         val retrofitTestService: LocatorApiService =   retrofit.create(LocatorApiService::class.java)
         val entries =  retrofitTestService.getLocations(FakeDataSource.deviceID).entries
@@ -106,7 +106,7 @@ class NetworkLocatorRepositoryTest {
 
         )
     }
-    @ -55,12 +59,14 @@ class LocatorAPIServiceTest {
+    @ -55,12 +59,14 @@ class TrackerAPIServiceTest {
         .build()
         val retrofitTestService: LocatorApiService =   retrofit.create(LocatorApiService::class.java)
         val res =  retrofitTestService.submitLog(FakeDataSource.logEntries)
@@ -118,12 +118,12 @@ class NetworkLocatorRepositoryTest {
     }
 
     @Test
-    fun  locatorApiService_verify_server_registrate() =
-    fun  locatorApiService_verify_server_register() =
+    fun  trackerApiService_verify_server_registrate() =
+    fun  trackerApiService_verify_server_register() =
         runTest{
             val retrofit: Retrofit = Retrofit.Builder()
                 .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
-            @ -68,7 +74,9 @@ fun  locatorApiService_verify_server_registrate() =
+            @ -68,7 +74,9 @@ fun  trackerApiService_verify_server_registrate() =
             .build()
             val retrofitTestService: LocatorApiService =   retrofit.create(LocatorApiService::class.java)
             val res =  retrofitTestService.registerTag(FakeDataSource.registrator)

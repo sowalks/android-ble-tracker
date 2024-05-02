@@ -1,7 +1,7 @@
-package com.example.bletracker.fake
+package uk.ac.cam.smw98.bletracker.fake
 
-import com.example.bletracker.data.datasource.LocatorApiService
-import com.example.bletracker.rules.TestDispatcherRule
+import uk.ac.cam.smw98.bletracker.data.datasource.LocatorApiService
+import uk.ac.cam.smw98.bletracker.rules.TestDispatcherRule
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.test.runTest
@@ -11,14 +11,14 @@ import org.junit.Rule
 import org.junit.Test
 import retrofit2.Retrofit
 
-class LocatorAPIServiceTest {
+class TrackerAPIServiceTest {
     private val baseURL =
         " http://127.0.0.1:5000"
 //Simple test for now for duplicates and was successes.
     @get:Rule
     val testDispatcher = TestDispatcherRule()
     @Test
-    fun  locatorApiService_verify_server_get_deviceID() =
+    fun  trackerApiService_verify_server_get_deviceID() =
         runTest{
              val retrofit: Retrofit = Retrofit.Builder()
                 .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
@@ -28,7 +28,7 @@ class LocatorAPIServiceTest {
             val id =  retrofitTestService.getDeviceID()
         }
     @Test
-    fun  locatorApiService_verify_server_get_locations() =
+    fun  trackerApiService_verify_server_get_locations() =
         runTest{
             val retrofit: Retrofit = Retrofit.Builder()
                 .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
@@ -47,7 +47,7 @@ class LocatorAPIServiceTest {
             )
         }
     @Test
-    fun  locatorApiService_verify_server_submitlog() =
+    fun  trackerApiService_verify_server_submitlog() =
         runTest{
             val retrofit: Retrofit = Retrofit.Builder()
                 .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
@@ -60,7 +60,7 @@ class LocatorAPIServiceTest {
         }
 
 @Test
-fun  locatorApiService_verify_server_registrate() =
+fun  trackerApiService_verify_server_registrate() =
     runTest{
         val retrofit: Retrofit = Retrofit.Builder()
             .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))

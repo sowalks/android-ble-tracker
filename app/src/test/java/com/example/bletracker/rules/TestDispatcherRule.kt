@@ -1,4 +1,4 @@
-package com.example.bletracker.rules
+package uk.ac.cam.smw98.bletracker.rules
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestDispatcher
@@ -19,7 +19,7 @@ class TestDispatcherRule(val testDispatcher: TestDispatcher = UnconfinedTestDisp
         override fun finished(description: Description) {
         Dispatchers.resetMain()
         }
-        }package com.example.bletracker.rules
+        }package uk.ac.cam.smw98.bletracker.rules
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

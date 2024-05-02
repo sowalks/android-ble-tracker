@@ -1,9 +1,9 @@
-package com.example.bletracker.fake
+package uk.ac.cam.smw98.bletracker.fake
 
 
-import com.example.bletracker.data.repository.NetworkRepository
-import com.example.bletracker.data.model.Entries
-import com.example.bletracker.data.model.Tag
+import uk.ac.cam.smw98.bletracker.data.repository.NetworkRepository
+import uk.ac.cam.smw98.bletracker.data.model.Entries
+import uk.ac.cam.smw98.bletracker.data.model.Tag
 
 
 class FakeNetworkRepository(): NetworkRepository {

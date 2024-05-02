@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option java_package = "com.example.bletracker.data";
+option java_package = "uk.ac.cam.smw98.bletracker.data";
 option java_multiple_files = true;
 
 message ProtoOwnedEntry {

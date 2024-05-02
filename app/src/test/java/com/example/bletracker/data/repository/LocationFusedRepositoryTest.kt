@@ -1,4 +1,4 @@
-package com.example.bletracker.data.repository
+package uk.ac.cam.smw98.bletracker.data.repository
 
 import org.junit.After
 import org.junit.Before

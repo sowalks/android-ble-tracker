@@ -1,4 +1,4 @@
-package com.example.bletracker.data.utils.ble
+package uk.ac.cam.smw98.bletracker.data.utils.ble
 
 import org.junit.Test
 

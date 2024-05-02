@@ -1,14 +1,14 @@
-package com.example.bletracker.fake
+package uk.ac.cam.smw98.bletracker.fake
 
 
-import com.example.bletracker.data.model.DeviceID
-import com.example.bletracker.data.model.Entries
-import com.example.bletracker.data.model.Entry
-import com.example.bletracker.data.model.LogStatus
-import com.example.bletracker.data.model.Position
-import com.example.bletracker.data.model.RegistrationFields
-import com.example.bletracker.data.model.Status
-import com.example.bletracker.data.model.Tag
+import uk.ac.cam.smw98.bletracker.data.model.DeviceID
+import uk.ac.cam.smw98.bletracker.data.model.Entries
+import uk.ac.cam.smw98.bletracker.data.model.Entry
+import uk.ac.cam.smw98.bletracker.data.model.LogStatus
+import uk.ac.cam.smw98.bletracker.data.model.Position
+import uk.ac.cam.smw98.bletracker.data.model.RegistrationFields
+import uk.ac.cam.smw98.bletracker.data.model.Status
+import uk.ac.cam.smw98.bletracker.data.model.Tag
 import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 

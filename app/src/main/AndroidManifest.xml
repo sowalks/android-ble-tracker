@@ -17,7 +17,7 @@
   ~ Modified from MarsPhotos Code Lab..
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.bletracker"
+    package="uk.ac.cam.smw98.bletracker"
     xmlns:tools="http://schemas.android.com/tools"
     >
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
@@ -28,8 +28,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:name=".BackgroundApplication"
-        android:allowBackup="true"
+        android:name="uk.ac.cam.smw98.bletracker.BackgroundApplication"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
